@@ -1,0 +1,11 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common_head (title, links)">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:replace="${title}">타이틀</title>
+
+    <!-- 공통 -->
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <!-- 추가 -->
+    <th:block th:replace="${links}"/>
+</head>
