@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+</head>
+
+<body>
+<main>
+    <section style="background-color: #9A616D;">
+        <div class="container py-5 align-items-center" style="height: 700px;">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col col-xl-10">
+                    <div class="card align-items-center h-100" style="border-radius: 1rem;">
+                        <div class="col-md-6 col-lg-7 align-items-center text-center">
+                            <div class="card-body p-4 p-lg-5 text-black">
+                                <div class="mb-3 pb-1">
+                                    <img alt="logo" height="50" width="180"
+                                         src="/images/logo.png">
+                                </div>
+
+                                <h5 class="fw-normal mb-3 pt-5 pb-3" style="letter-spacing: 1px;">WELCOME!</h5>
+
+                                <div class="pt-1 mb-4">
+                                    <a href="#" th:href="@{/oauth2/authorization/google}">
+                                        <img alt="google login" src="/images/google_login.png">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!--/* Scripts */-->
+<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
+
+<!--/* 페이지 전용 스크립트 */-->
+
+</body>
+</html>
