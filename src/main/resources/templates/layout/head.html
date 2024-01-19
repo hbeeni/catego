@@ -1,11 +1,18 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="common_head (title, links)">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:replace="${title}">타이틀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <title th:replace="${title}">title</title>
 
     <!-- 공통 -->
+    <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
 
     <!-- 추가 -->
-    <th:block th:replace="${links}"/>
+    <th:block th:replace="${links}" />
 </head>
+</html>

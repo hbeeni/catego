@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+    <meta charset="UTF-8">
+    <title>CATEGO</title>
+</head>
+
+<body>
+<header th:replace="~{layout/header :: header}">헤더</header>
+
+<div id="wrapper">
+    <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
+    <main th:replace="~{layout/video-list :: #video-list}">메인 컨텐츠</main>
+</div>
+
+<!--/* Scripts */-->
+<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
+
+<!--/* 페이지 전용 스크립트 */-->
+
+</body>
+</html>
