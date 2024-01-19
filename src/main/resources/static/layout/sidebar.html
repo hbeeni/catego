@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <title>sidebar</title>
+    <link rel="stylesheet" href="/catego/src/main/resources/static/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="/catego/src/main/resources/static/css/sb-admin-2.min.css">
+</head>
+
+<body>
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+        <a class="nav-link" href="#">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item" data-bs-toggle="modal" data-bs-target="#createModal">
+        <a class="nav-link" href="#">
+            <i class="fa-solid fa-plus"></i>
+            <span>Create</span>
+        </a>
+    </li>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="createModalLabel">Create new list</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <label for="listName" class="col-form-label">Name</label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" id="listName" class="form-control col-auto"
+                                       placeholder="Enter list title">
+                            </div>
+                        </div>
+                        <hr style="border-color: gray;">
+
+                        <!-- 검색 기능 - https://velog.io/@hyun/ajax%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EA%B2%80%EC%83%89%EA%B8%B0%EB%8A%A5-%EB%A7%8C%EB%93%A4%EA%B8%B0 -->
+                        <input class="form-control mb-3" type="search" placeholder="search subscriptions"
+                               aria-label="Search">
+
+                        <!-- channel 1 start -->
+                        <div class="row ms-1 mt-2 mb-4">
+                            <div class="d-flex">
+                                <div class="form-check">
+                                    <input class="form-check-input me-2" type="checkbox" value=""
+                                           id="flexCheckDefault1">
+                                    <label class="form-check-label" for="flexCheckDefault1">
+                                        <div class="d-flex flex-row align-self-center">
+                                            <img src="/catego/src/main/resources/static/images/2-2.jpg"
+                                                 class="rounded-circle me-2" height="32" width="32" alt="">
+                                            <div class="d-flex flex-column align-self-center">
+                                                <div class="fw-semibold">CodeWithEase</div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- channel 1 end -->
+
+                        <!-- channel 2 start -->
+                        <div class="row ms-1 mt-2 mb-4">
+                            <div class="d-flex">
+                                <div class="form-check">
+                                    <input class="form-check-input me-2" type="checkbox" value=""
+                                           id="flexCheckDefault2">
+                                    <label class="form-check-label" for="flexCheckDefault2">
+                                        <div class="d-flex flex-row align-self-center">
+                                            <img src="/catego/src/main/resources/static/images/1-2.jpg"
+                                                 class="rounded-circle me-2" height="32" width="32" alt="">
+                                            <div class="d-flex flex-column align-self-center">
+                                                <div class="fw-semibold">freeCodeCamp.org</div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- channel 2 end -->
+
+                        <!-- channel 3 start -->
+                        <div class="row ms-1 mt-2 mb-4">
+                            <div class="d-flex">
+                                <div class="form-check">
+                                    <input class="form-check-input me-2" type="checkbox" value=""
+                                           id="flexCheckDefault3">
+                                    <label class="form-check-label" for="flexCheckDefault3">
+                                        <div class="d-flex flex-row align-self-center">
+                                            <img src="/catego/src/main/resources/static/images/3-2.jpg"
+                                                 class="rounded-circle me-2" height="32" width="32" alt="">
+                                            <div class="d-flex flex-column align-self-center">
+                                                <div class="fw-semibold">Chispa Motivation</div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- channel 3 end -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Modal end -->
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        List
+    </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>개발</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>영어</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Tables -->
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>요리</span>
+        </a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>
+<!-- End of Sidebar -->
+
+<!-- Bootstrap core JavaScript-->
+<script src="/catego/src/main/resources/static/js/jquery.min.js"></script>
+<script src="/catego/src/main/resources/static/js/bootstrap.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/catego/src/main/resources/static/js/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/catego/src/main/resources/static/js/sb-admin-2.min.js"></script>
+</body>
+
+</html>
