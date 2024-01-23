@@ -31,3 +31,8 @@ spring:
             scope:
               - email
               - profile
+              - https://www.googleapis.com/auth/youtube.readonly
+
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY}

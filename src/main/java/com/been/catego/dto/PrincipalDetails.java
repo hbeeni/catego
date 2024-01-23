@@ -1,7 +1,6 @@
 package com.been.catego.dto;
 
 import com.been.catego.domain.User;
-import lombok.Data;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,33 +11,36 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-@Data
 @Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
+    private Long id;
     private String loginId;
     private String providerId;
     private String nickname;
     private Map<String, Object> oAuth2Attributes;
 
-    public static PrincipalDetails of(String loginId, String providerId, String nickname) {
-        return PrincipalDetails.of(loginId, providerId, nickname, Map.of());
+    public static PrincipalDetails of(Long id, String loginId, String providerId, String nickname) {
+        return PrincipalDetails.of(id, loginId, providerId, nickname, Map.of());
     }
 
-    public static PrincipalDetails of(String loginId, String providerId, String nickname,
+    public static PrincipalDetails of(Long id, String loginId, String providerId, String nickname,
                                       Map<String, Object> oAuth2Attributes) {
-        return new PrincipalDetails(loginId, providerId, nickname, oAuth2Attributes);
+        return new PrincipalDetails(id, loginId, providerId, nickname, oAuth2Attributes);
     }
 
     public static PrincipalDetails from(User user) {
-        return PrincipalDetails.of(user.getLoginId(), user.getProviderId(), user.getNickname());
+        return PrincipalDetails.of(user.getId(), user.getLoginId(), user.getProviderId(), user.getNickname());
     }
 
     public static PrincipalDetails from(User user, Map<String, Object> oAuth2Attributes) {
-        return PrincipalDetails.of(user.getLoginId(), user.getProviderId(), user.getNickname(), oAuth2Attributes);
+        return PrincipalDetails.of(user.getId(), user.getLoginId(), user.getProviderId(), user.getNickname(),
+                oAuth2Attributes);
     }
 
-    private PrincipalDetails(String loginId, String providerId, String nickname, Map<String, Object> oAuth2Attributes) {
+    private PrincipalDetails(Long id, String loginId, String providerId, String nickname,
+                             Map<String, Object> oAuth2Attributes) {
+        this.id = id;
         this.loginId = loginId;
         this.providerId = providerId;
         this.nickname = nickname;

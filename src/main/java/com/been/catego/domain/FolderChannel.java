@@ -1,8 +1,11 @@
 package com.been.catego.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,18 +16,22 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Subscription {
+public class FolderChannel {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Folder folder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Channel channel;
 
     @Builder
-    private Subscription(String id, String name) {
-        this.id = id;
-        this.name = name;
+    private FolderChannel(Folder folder, Channel channel) {
+        this.folder = folder;
+        this.channel = channel;
     }
 
     @Override
@@ -32,7 +39,7 @@ public class Subscription {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Subscription that)) {
+        if (!(o instanceof FolderChannel that)) {
             return false;
         }
         return this.getId() != null && Objects.equals(this.getId(), that.getId());

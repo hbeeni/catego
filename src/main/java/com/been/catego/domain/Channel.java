@@ -1,37 +1,38 @@
 package com.been.catego.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class FolderSubscription {
+public class Channel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Folder folder;
+    @Column(nullable = false, length = 100)
+    private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Subscription subscription;
+    @Setter
+    @OneToMany(mappedBy = "channel")
+    private List<FolderChannel> folderChannels = new ArrayList<>();
 
     @Builder
-    private FolderSubscription(Folder folder, Subscription subscription) {
-        this.folder = folder;
-        this.subscription = subscription;
+    private Channel(String id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class FolderSubscription {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FolderSubscription that)) {
+        if (!(o instanceof Channel that)) {
             return false;
         }
         return this.getId() != null && Objects.equals(this.getId(), that.getId());
