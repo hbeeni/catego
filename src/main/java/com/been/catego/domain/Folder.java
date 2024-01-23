@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,9 @@ public class Folder {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Setter
     @OneToMany(mappedBy = "folder")
-    private List<FolderSubscription> folderSubscriptions = new ArrayList<>();
+    private List<FolderChannel> folderChannels = new ArrayList<>();
 
     @Builder
     private Folder(User user, String name) {
