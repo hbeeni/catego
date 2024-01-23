@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <title>Subscriptions</title>
+</head>
+
+<body>
+<div class="container" id="channel-detail-list">
+    <div class="row mt-3 mb-4 text-center">
+        <h3 class="fw-bold">All subscriptions</h3>
+    </div>
+
+    <div class="row mt-2 mb-4" th:each="channel : ${channels}">
+        <div class="d-flex justify-content-center">
+            <div class="me-1 flex-column" style="max-width: 360px; min-width: 240px;">
+                <img src="/images/2-2.jpg" th:src="${channel.thumbnailUrl}"
+                     class="rounded-circle" height="100" width="100" alt="">
+            </div>
+            <div class="d-flex flex-column align-self-center me-1" style="flex-basis: 50%;">
+                <div class="fw-semibold mb-2" th:text="${channel.channelTitle}">CodeWithEase</div>
+                <div class="text-secondary mb-1" style="font-size: smaller;"
+                     th:text="|${channel.customUrl} • 구독자 ${channel.subscriberCount}명|">@codeWithEase • 구독자 12만명
+                </div>
+                <div class="text-secondary channel-description" style="font-size: smaller;"
+                     th:text="${channel.channelDescription}">Code
+                    with ease
+                </div>
+            </div>
+            <div class="d-flex col-1 align-self-center">
+                <span class="badge bg-secondary me-1" th:each="folderName : ${channel.folderNames}"
+                      th:text="folderName">개발</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>
