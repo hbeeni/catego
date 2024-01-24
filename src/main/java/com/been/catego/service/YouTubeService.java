@@ -33,7 +33,7 @@ public class YouTubeService {
             youtubeApiUtil.setYouTubeRequest(subscriptionList);
             subscriptionList.setMine(true);
             subscriptionList.setOrder("alphabetical");
-            subscriptionList.setMaxResults(50L);
+            subscriptionList.setMaxResults(10L);
             subscriptionList.setPageToken(pageToken);
 
             return subscriptionList.execute();
