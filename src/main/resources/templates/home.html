@@ -11,7 +11,7 @@
 
 <div id="wrapper">
     <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
-    <main th:replace="~{layout/subscription-detail-list :: #channel-detail-list}">메인 컨텐츠</main>
+    <main th:insert="~{layout/subscription-detail-list :: #channel-detail-list}"></main>
 </div>
 
 <!--/* Scripts */-->
