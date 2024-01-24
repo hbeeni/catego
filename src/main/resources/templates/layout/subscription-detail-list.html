@@ -35,6 +35,16 @@
         </div>
     </div>
 
+    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${pageToken.prevPageToken == null} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/(pageToken=${pageToken.prevPageToken})}">Previous</a>
+            </li>
+            <li class="page-item" th:classappend="${pageToken.nextPageToken == null} ? 'disabled' : ''">
+                <a class="page-link" href="#" th:href="@{/(pageToken=${pageToken.nextPageToken})}">Next</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
 
