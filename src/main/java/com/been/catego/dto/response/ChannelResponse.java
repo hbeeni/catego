@@ -1,4 +1,4 @@
-package com.been.catego.dto;
+package com.been.catego.dto.response;
 
 import com.been.catego.domain.Folder;
 import com.been.catego.domain.FolderChannel;
