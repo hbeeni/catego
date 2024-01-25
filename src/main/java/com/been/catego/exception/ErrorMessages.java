@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorMessages {
 
-    IO_EXCEPTION("입출력 오류 발생");
+    FAIL_TO_LOAD_YOUTUBE_DATA("유튜브 데이터를 가져오는 과정에서 문제가 발생하였습니다."),
+    NOT_FOUND_FOLDER("존재하지 않는 폴더입니다.");
 
     private final String message;
 }
