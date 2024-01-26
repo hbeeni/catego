@@ -1,8 +1,7 @@
 package com.been.catego.dto.response;
 
 import com.been.catego.domain.Folder;
-import com.been.catego.domain.FolderChannel;
-import com.been.catego.util.FormatUtil;
+import com.been.catego.util.YoutubeFormatUtils;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelSnippet;
 import com.google.api.services.youtube.model.ChannelStatistics;
@@ -19,7 +18,7 @@ public record ChannelResponse(
         List<String> folderNames
 ) {
 
-    public static ChannelResponse from(Channel channel, List<FolderChannel> folderChannels) {
+    public static ChannelResponse from(Channel channel, List<Folder> folders) {
         ChannelSnippet snippet = channel.getSnippet();
         ChannelStatistics statistics = channel.getStatistics();
 
@@ -29,9 +28,8 @@ public record ChannelResponse(
                 snippet.getCustomUrl(),
                 snippet.getDescription(),
                 snippet.getThumbnails().getDefault().getUrl(),
-                FormatUtil.formatSubscriberCount(statistics.getSubscriberCount()),
-                folderChannels == null ? null : folderChannels.stream()
-                        .map(FolderChannel::getFolder)
+                YoutubeFormatUtils.formatSubscriberCount(statistics.getSubscriberCount()),
+                folders.isEmpty() ? null : folders.stream()
                         .map(Folder::getName)
                         .toList()
         );

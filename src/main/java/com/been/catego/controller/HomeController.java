@@ -1,9 +1,9 @@
 package com.been.catego.controller;
 
-import com.been.catego.dto.ChannelResponse;
-import com.been.catego.dto.CommonResponse;
 import com.been.catego.dto.PrincipalDetails;
-import com.been.catego.service.FolderChannelService;
+import com.been.catego.dto.response.ChannelResponse;
+import com.been.catego.dto.response.WithPageTokenResponse;
+import com.been.catego.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,19 +17,19 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-    private final FolderChannelService folderChannelService;
+    private final ChannelService channelService;
 
     @GetMapping("/")
     public String home(@AuthenticationPrincipal PrincipalDetails principalDetails,
                        @RequestParam(required = false) String pageToken,
                        Model model) {
-        CommonResponse<List<ChannelResponse>> result = folderChannelService.findAllSubscription(
-                principalDetails.getId(), pageToken);
+        WithPageTokenResponse<List<ChannelResponse>> result =
+                channelService.findAllSubscription(principalDetails.getId(), pageToken, 10);
 
         model.addAttribute("profileImageUrl", principalDetails.getProfileImageUrl());
         model.addAttribute("nickname", principalDetails.getNickname());
-        model.addAttribute("channels", result.getData());
-        model.addAttribute("pageToken", result.getPageToken());
+        model.addAttribute("channels", result.data());
+        model.addAttribute("pageToken", result.pageToken());
 
         return "home";
     }
