@@ -14,7 +14,7 @@
 
         <!-- Nav Item -->
         <li class="nav-item active">
-            <a class="nav-link" href="home.html">
+            <a class="nav-link" href="home.html" th:href="@{/}">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span></a>
         </li>
@@ -23,27 +23,24 @@
         <hr class="sidebar-divider">
 
         <!-- Nav Item -->
-        <li class="nav-item" data-bs-toggle="modal" data-bs-target="#createModal">
-            <a class="nav-link" href="#">
+        <li class="nav-item">
+            <a class="nav-link" href="#" th:href="@{/folder/new}">
                 <i class="fa-solid fa-plus"></i>
                 <span>Create</span>
             </a>
         </li>
-
-        <!-- Create List Modal -->
-        <div th:replace="~{layout/sidebar-create-modal :: #createModal}"></div>
 
         <!-- Divider -->
         <hr class="sidebar-divider">
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            List
+            Folder
         </div>
 
         <!-- Nav Item -->
         <li class="nav-item">
-            <a class="nav-link" href="list.html">
+            <a class="nav-link" href="#">
                 <i class="fas fa-fw fa-folder"></i>
                 <span>개발</span>
             </a>
