@@ -1,5 +1,6 @@
 package com.been.catego.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +33,18 @@ public class Folder {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Setter
-    @OneToMany(mappedBy = "folder")
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<FolderChannel> folderChannels = new ArrayList<>();
 
     @Builder
     private Folder(User user, String name) {
         this.user = user;
         this.name = name;
+    }
+
+    public void setFolderChannels(List<FolderChannel> folderChannels) {
+        this.folderChannels = folderChannels;
+        folderChannels.forEach(folderChannel -> folderChannel.setFolder(this));
     }
 
     @Override

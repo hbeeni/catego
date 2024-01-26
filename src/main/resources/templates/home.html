@@ -11,13 +11,13 @@
 
 <div id="wrapper">
     <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
-    <main th:insert="~{layout/subscription-detail-list :: #channel-detail-list}"></main>
+    <main class="container justify-content-md-center"
+          th:insert="~{layout/subscription-detail-list :: #subscription-detail-list}"></main>
 </div>
 
 <!--/* Scripts */-->
 <script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
 
 <!--/* 페이지 전용 스크립트 */-->
-
 </body>
 </html>
