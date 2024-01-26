@@ -7,9 +7,9 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public abstract class FormatUtil {
+public final class YoutubeFormatUtils {
 
-    private FormatUtil() {
+    private YoutubeFormatUtils() {
     }
 
     public static String formatSubscriberCount(BigInteger subscriberCount) {
@@ -21,7 +21,7 @@ public abstract class FormatUtil {
     }
 
     public static String formatDateTime(DateTime dateTime) {
-        LocalDateTime koreaLDT = ConvertUtil.convertToKoreaLocalDateTime(dateTime);
+        LocalDateTime koreaLDT = YoutubeConvertUtils.convertToKoreaLocalDateTime(dateTime);
         LocalDateTime now = LocalDateTime.now();
         long minutes = ChronoUnit.MINUTES.between(koreaLDT, now);
         long hours = ChronoUnit.HOURS.between(koreaLDT, now);
