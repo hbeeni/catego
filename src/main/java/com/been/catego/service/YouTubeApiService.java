@@ -1,5 +1,8 @@
 package com.been.catego.service;
 
+import com.been.catego.dto.response.PageTokenResponse;
+import com.been.catego.dto.response.SubscriptionResponse;
+import com.been.catego.dto.response.WithPageTokenResponse;
 import com.been.catego.exception.CustomException;
 import com.been.catego.exception.ErrorMessages;
 import com.been.catego.util.YouTubeApiUtil;
@@ -7,13 +10,16 @@ import com.been.catego.util.YoutubeConvertUtils;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.been.catego.service.YouTubePart.PLAYER;
 import static com.been.catego.service.YouTubePart.SNIPPET;
@@ -32,9 +38,37 @@ public class YouTubeApiService {
         youTube = YouTubeApiUtil.youTube();
     }
 
-    public List<Channel> findAllSubscription(SubscriptionListResponse subscriptionListResponse) {
+    public List<Channel> findChannels(SubscriptionListResponse subscriptionListResponse) {
         List<String> subscriptionIds = YoutubeConvertUtils.convertToSubscriptionIds(subscriptionListResponse);
         return getChannelsByIds(subscriptionIds);
+    }
+
+    public List<SubscriptionResponse> getAllSubscriptions() {
+        List<Subscription> subscriptions = new ArrayList<>();
+        String nextPageToken = null;
+
+        do {
+            SubscriptionListResponse subscriptionListResponse = getSubscriptionListResponse(nextPageToken, 50L);
+            subscriptions.addAll(subscriptionListResponse.getItems());
+            nextPageToken = subscriptionListResponse.getNextPageToken();
+        } while (nextPageToken != null);
+
+        return subscriptions.stream()
+                .map(SubscriptionResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    public WithPageTokenResponse<List<SubscriptionResponse>> getSubscriptionsWithPageToken(String pageToken,
+                                                                                           long maxResult) {
+        SubscriptionListResponse subscriptionListResponse = getSubscriptionListResponse(pageToken, maxResult);
+
+        PageTokenResponse pageTokenResponse = new PageTokenResponse(subscriptionListResponse.getPrevPageToken(),
+                subscriptionListResponse.getNextPageToken());
+        List<SubscriptionResponse> data = subscriptionListResponse.getItems().stream()
+                .map(SubscriptionResponse::from)
+                .toList();
+
+        return new WithPageTokenResponse<>(data, pageTokenResponse);
     }
 
     /**

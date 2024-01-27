@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <title>Folder Top Navbar</title>
+</head>
+
+<body>
+<nav class="navbar bg-body-tertiary px-3 mb-3 static-top shadow">
+        <span class="navbar-brand">
+            <div class="d-flex m-1">
+                <h4 class="fw-semibold mb-0 me-2" th:text="${folder.folderName}">개발</h4>
+                <div class="d-flex align-items-center me-3" th:text="|${folder.channelCount} channels|">3 channels</div>
+            </div>
+        </span>
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a href="#" th:href="@{/folder/{folderId}/edit (folderId=${folderId})}" class="text-success nav-link">
+                <i class="fa-solid fa-pencil"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="text-danger nav-link" data-toggle="tooltip" data-placement="top"
+               data-bs-toggle="modal" data-bs-target="#deleteListModal">
+                <i class="fa-solid fa-xmark"></i></a>
+        </li>
+    </ul>
+</nav>
+</body>
+
+</html>

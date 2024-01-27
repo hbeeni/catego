@@ -2,12 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>폴더 생성</title>
+    <title>폴더 수정</title>
 </head>
 <body>
-<div id="create-folder" style="width: 60%">
+<div id="edit-folder" style="width: 60%">
     <div class="row mt-3 mb-4 text-center">
-        <h3 class="fw-bold">Create new folder</h3>
+        <h3 class="fw-bold" th:text="|Edit ${folder.folderName}|">Edit folder</h3>
     </div>
 
     <form method="post">
@@ -18,10 +18,10 @@
             </div>
             <div class="col-sm-5">
                 <input type="text" id="folderName" class="form-control col-auto" name="folderName"
-                       placeholder="Enter folder title">
+                       value="개발" th:value="${folder.folderName}">
             </div>
             <div class="col-md-auto">
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
             </div>
         </div>
         <hr style="border-color: gray;">
@@ -30,7 +30,7 @@
         <input class="form-control mb-3" type="search" placeholder="search subscriptions"
                aria-label="Search">-->
 
-        <div id="create-folder-subscriptions">
+        <div id="edit-folder-subscriptions">
         </div>
     </form>
 </div>

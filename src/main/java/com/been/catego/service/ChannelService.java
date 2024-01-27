@@ -2,7 +2,7 @@ package com.been.catego.service;
 
 import com.been.catego.domain.Folder;
 import com.been.catego.domain.FolderChannel;
-import com.been.catego.dto.response.ChannelResponse;
+import com.been.catego.dto.response.ChannelWithFolderNamesResponse;
 import com.been.catego.dto.response.PageTokenResponse;
 import com.been.catego.dto.response.WithPageTokenResponse;
 import com.been.catego.repository.FolderChannelRepository;
@@ -29,29 +29,31 @@ public class ChannelService {
     private final YouTubeApiService youTubeApiService;
 
     @Transactional(readOnly = true)
-    public WithPageTokenResponse<List<ChannelResponse>> findAllSubscription(Long userId, String pageToken,
-                                                                            long maxResult) {
+    public WithPageTokenResponse<List<ChannelWithFolderNamesResponse>> findSubscriptionChannelsWithFolderNames(
+            Long userId, String pageToken, long maxResult) {
         //구독 채널 가져오기
         SubscriptionListResponse subscriptionListResponse =
                 youTubeApiService.getSubscriptionListResponse(pageToken, maxResult);
-        List<Channel> youTubeChannels = youTubeApiService.findAllSubscription(subscriptionListResponse);
+        List<Channel> youTubeChannels = youTubeApiService.findChannels(subscriptionListResponse);
 
-        List<ChannelResponse> data = getChannelResponsesSortedByChannelTitle(userId, youTubeChannels);
+        List<ChannelWithFolderNamesResponse> data = getChannelResponsesSortedByChannelTitle(userId, youTubeChannels);
         PageTokenResponse pageTokenResponse = new PageTokenResponse(subscriptionListResponse.getPrevPageToken(),
                 subscriptionListResponse.getNextPageToken());
 
         return new WithPageTokenResponse<>(data, pageTokenResponse);
     }
 
-    private List<ChannelResponse> getChannelResponsesSortedByChannelTitle(Long userId, List<Channel> youTubeChannels) {
+    private List<ChannelWithFolderNamesResponse> getChannelResponsesSortedByChannelTitle(Long userId,
+                                                                                         List<Channel> youTubeChannels) {
         List<Folder> folders = folderRepository.findByUser_Id(userId);
         Map<String, List<FolderChannel>> channelIdToFolderChannelsMap =
                 getChannelIdToFolderChannelsMap(toFolderIds(folders));
 
         return youTubeChannels.stream()
-                .map(youTubeChannel -> ChannelResponse.from(youTubeChannel,
+                .map(youTubeChannel -> ChannelWithFolderNamesResponse.from(youTubeChannel,
                         getFoldersForChannel(channelIdToFolderChannelsMap, youTubeChannel)))
-                .sorted(Comparator.comparing(channelResponse -> channelResponse.channelTitle().toLowerCase()))
+                .sorted(Comparator.comparing(
+                        channelWithFolderNamesResponse -> channelWithFolderNamesResponse.channelTitle().toLowerCase()))
                 .toList();
     }
 

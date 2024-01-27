@@ -8,7 +8,7 @@ import com.google.api.services.youtube.model.ChannelStatistics;
 
 import java.util.List;
 
-public record ChannelResponse(
+public record ChannelWithFolderNamesResponse(
         String channelId,
         String channelTitle,
         String customUrl,
@@ -18,11 +18,11 @@ public record ChannelResponse(
         List<String> folderNames
 ) {
 
-    public static ChannelResponse from(Channel channel, List<Folder> folders) {
+    public static ChannelWithFolderNamesResponse from(Channel channel, List<Folder> folders) {
         ChannelSnippet snippet = channel.getSnippet();
         ChannelStatistics statistics = channel.getStatistics();
 
-        return new ChannelResponse(
+        return new ChannelWithFolderNamesResponse(
                 channel.getId(),
                 snippet.getTitle(),
                 snippet.getCustomUrl(),
