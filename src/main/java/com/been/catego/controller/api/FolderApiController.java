@@ -1,6 +1,7 @@
 package com.been.catego.controller.api;
 
 import com.been.catego.dto.PrincipalDetails;
+import com.been.catego.dto.response.SubscriptionResponse;
 import com.been.catego.dto.response.VideoResponse;
 import com.been.catego.service.FolderService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,13 @@ public class FolderApiController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long folderId) {
         return ResponseEntity.ok(folderService.getFolderVideos(principalDetails.getId(), folderId));
+    }
+
+    @GetMapping("/{folderId}/channels")
+    public ResponseEntity<List<SubscriptionResponse>> getAllSubscriptionsInFolderWithInclusionStatus(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long folderId) {
+        return ResponseEntity.ok(
+                folderService.getAllSubscriptionsWithInclusionStatusInFolder(folderId, principalDetails.getId()));
     }
 }

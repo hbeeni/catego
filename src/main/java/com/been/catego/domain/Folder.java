@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,20 @@ public class Folder {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "folder", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.PERSIST)
     private List<FolderChannel> folderChannels = new ArrayList<>();
 
     @Builder
     private Folder(User user, String name) {
         this.user = user;
+        this.name = name;
+    }
+
+    public void updateName(String name) {
+        if (StringUtils.isEmptyOrWhitespace(name)) {
+            return;
+        }
+
         this.name = name;
     }
 

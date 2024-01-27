@@ -2,7 +2,7 @@ package com.been.catego.controller;
 
 import com.been.catego.dto.ChannelDto;
 import com.been.catego.dto.PrincipalDetails;
-import com.been.catego.dto.request.CreateListRequest;
+import com.been.catego.dto.request.FolderRequest;
 import com.been.catego.service.FolderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,26 +35,53 @@ public class FolderController {
 
     @PostMapping("/new")
     public String createFolder(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                               @ModelAttribute CreateListRequest request,
+                               @ModelAttribute FolderRequest request,
                                RedirectAttributes redirectAttributes) {
         log.info("request = {}", request);
 
         Map<String, ChannelDto> channelIdToChannelDtoMap = parseChannelString(request);
 
         Long folderId =
-                folderService.createFolder(principalDetails.getId(), request.listName(), channelIdToChannelDtoMap);
+                folderService.createFolder(principalDetails.getId(), request.folderName(), channelIdToChannelDtoMap);
         redirectAttributes.addAttribute("folderId", folderId);
 
         return "redirect:/folder/{folderId}";
     }
 
     @GetMapping("/{folderId}")
-    public String getFolderMain(@PathVariable Long folderId, Model model) {
+    public String getFolderMain(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                @PathVariable Long folderId,
+                                Model model) {
         model.addAttribute("folderId", folderId);
+        model.addAttribute("folder", folderService.getFolderInfo(folderId, principalDetails.getId()));
         return "folder/folder";
     }
 
-    private static Map<String, ChannelDto> parseChannelString(CreateListRequest request) {
+    @GetMapping("/{folderId}/edit")
+    public String editForm(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                           @PathVariable Long folderId,
+                           Model model) {
+        model.addAttribute("folderId", folderId);
+        model.addAttribute("folder", folderService.getFolderInfo(folderId, principalDetails.getId()));
+        return "folder/edit-folder-form";
+    }
+
+    @PostMapping("/{folderId}/edit")
+    public String editFolder(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                             @PathVariable Long folderId,
+                             @ModelAttribute FolderRequest request,
+                             RedirectAttributes redirectAttributes) {
+        log.info("request = {}", request);
+
+        Map<String, ChannelDto> channelIdToChannelDtoMap = parseChannelString(request);
+
+        folderService.editFolder(folderId, principalDetails.getId(), request.folderName(), channelIdToChannelDtoMap);
+
+        redirectAttributes.addAttribute("folderId", folderId);
+        return "redirect:/folder/{folderId}";
+    }
+
+    private static Map<String, ChannelDto> parseChannelString(FolderRequest request) {
         return request.channels().stream()
                 .map(channel -> channel.split("\\|")) // |로 분할
                 .collect(toMap(
