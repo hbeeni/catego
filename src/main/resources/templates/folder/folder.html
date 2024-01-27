@@ -12,7 +12,11 @@
 <div id="wrapper">
     <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
     <div id="folder-id" hidden th:text="${folderId}"></div>
-    <main class="container d-flex justify-content-center" th:insert="~{layout/video-list :: .page-content}"></main>
+    <div id="content-wrapper">
+        <div th:replace="~{layout/folder-top-navbar :: .navbar}">폴더 상단 네비게이션 바</div>
+        <main class="container d-flex justify-content-center"
+              th:insert="~{layout/video-list :: .page-content}"></main>
+    </div>
 </div>
 
 <!--/* Scripts */-->

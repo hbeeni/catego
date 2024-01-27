@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>폴더 수정</title>
+</head>
+<body>
+<div id="edit-folder" style="width: 60%">
+    <div class="row mt-3 mb-4 text-center">
+        <h3 class="fw-bold" th:text="|Edit ${folder.folderName}|">Edit folder</h3>
+    </div>
+
+    <form method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-auto">
+                <label for="folderName" class="col-form-label">Name</label>
+            </div>
+            <div class="col-sm-5">
+                <input type="text" id="folderName" class="form-control col-auto" name="folderName"
+                       value="개발" th:value="${folder.folderName}">
+            </div>
+            <div class="col-md-auto">
+                <button type="submit" class="btn btn-primary">Edit</button>
+            </div>
+        </div>
+        <hr style="border-color: gray;">
+
+        <!--검색 기능은 고민 중
+        <input class="form-control mb-3" type="search" placeholder="search subscriptions"
+               aria-label="Search">-->
+
+        <div id="edit-folder-subscriptions">
+        </div>
+    </form>
+</div>
+</body>
+</html>

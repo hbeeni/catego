@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+    <meta charset="UTF-8">
+    <title>CATEGO</title>
+</head>
+
+<body>
+<header th:replace="~{layout/header :: header}">헤더</header>
+
+<div id="wrapper">
+    <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
+    <div id="folder-id" hidden th:text="${folderId}"></div>
+    <main class="container d-flex justify-content-center" th:insert="~{layout/edit-folder :: #edit-folder}"></main>
+</div>
+
+<!--/* Scripts */-->
+<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
+
+<!--/* 페이지 전용 스크립트 */-->
+<script>
+    var subscriptions;
+    var count = 20;
+    var start = 0;
+    var end = count;
+    var loading = false;    //중복실행여부 확인 변수
+
+    $(document).ready(function () {
+        getSubscriptions();
+    });
+
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + 200 >= $(document).height() - $(window).height()) {
+            if (!loading)    //실행 가능 상태라면?
+            {
+                loading = true; //실행 불가능 상태로 변경
+                appendSubscriptions(start, end);
+            } else            //실행 불가능 상태라면?
+            {
+                console.log('다음페이지를 로딩중입니다.');
+            }
+        }
+    });
+
+    function getSubscriptions() {
+        var folderId = $('#folder-id').text();
+        console.log('folderId:', folderId);
+
+        $.ajax({
+            url: '/api/folders/' + folderId + '/channels',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                subscriptions = data;
+                appendSubscriptions(start, end);
+            },
+            error: function (error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    }
+
+    function appendSubscriptions(s, e) {
+        var str = '';
+        e = subscriptions.length < e ? subscriptions.length : e;
+
+        for (var i = s; i < e; i++) {
+            var checked = subscriptions[i].includedInFolder ? 'checked' : '';
+
+            str += '<div class="row ms-1 mt-2 mb-4">';
+            str += '<div class="d-flex">';
+            str += '<div class="form-check">';
+            str += '<input class="form-check-input me-2" type="checkbox" ' + checked + ' name="channels" id="' +
+                subscriptions[i].channelId + '" value="' + subscriptions[i].channelId + '|' + subscriptions[i].channelTitle + '">';
+            str += '<label class="form-check-label" for="' + subscriptions[i].channelId + '">';
+            str += '<div class="d-flex flex-row align-self-center">';
+            str += '<img src="' + subscriptions[i].thumbnailUrl + '" class="rounded-circle me-2" height="32" width="32">';
+            str += '<div class="d-flex flex-column align-self-center">';
+            str += '<div class="fw-semibold">' + subscriptions[i].channelTitle + '</div>';
+            str += '</div></div></label></div></div></div>';
+        }
+
+        $('#edit-folder-subscriptions').append(str);
+
+        start = e;
+        end = e + count;
+        loading = false;
+    }
+</script>
+</body>
+</html>
