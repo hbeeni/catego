@@ -140,6 +140,15 @@ public class FolderService {
         folder.setFolderChannels(newFolderChannels);
     }
 
+    public void deleteFolder(Long folderId, Long userId) {
+        Folder folder = folderRepository.findFolderByIdAndUserId(folderId, userId)
+                .orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_FOLDER));
+        List<FolderChannel> folderChannels = folder.getFolderChannels();
+
+        folderChannelRepository.deleteAllInBatch(folderChannels);
+        folderRepository.delete(folder);
+    }
+
     /**
      * DB에 저장되어 있지 않은 채널을 저장한 후, 원래 저장되어 있던 채널과 저장한 채널 리스트를 반환한다.
      */

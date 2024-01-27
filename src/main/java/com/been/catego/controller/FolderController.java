@@ -81,6 +81,13 @@ public class FolderController {
         return "redirect:/folder/{folderId}";
     }
 
+    @PostMapping("/{folderId}/delete")
+    public String deleteFolder(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                               @PathVariable Long folderId) {
+        folderService.deleteFolder(folderId, principalDetails.getId());
+        return "redirect:/";
+    }
+
     private static Map<String, ChannelDto> parseChannelString(FolderRequest request) {
         return request.channels().stream()
                 .map(channel -> channel.split("\\|")) // |로 분할
