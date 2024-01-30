@@ -36,6 +36,10 @@
         </pre>
         <button type="button" id="toggleDescription" class="btn">더보기</button>
         <h5 class="mt-4 fw-semibold" th:text="|댓글 ${videoPlayer.commentCount}개|">댓글 925개</h5>
+        <section class="gradient-custom mt-3">
+            <div id="comments-container" class="row d-flex justify-content-start">
+            </div>
+        </section>
     </div>
 </div>
 
@@ -115,6 +119,116 @@
 
     function stopVideo() {
         player.stopVideo();
+    }
+</script>
+<script id="video-player-comments-js" th:inline="javascript">
+    var videoId = [[${videoPlayer.videoId}]];
+    var pageToken = 0;
+    var loading = false;    //중복실행여부 확인 변수
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchMoreData()
+    });
+
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + 200 >= $(document).height() - $(window).height()) {
+            if (!loading && pageToken != null)    //실행 가능 상태라면?
+            {
+                loading = true; //실행 불가능 상태로 변경
+                fetchMoreData();
+            } else            //실행 불가능 상태라면?
+            {
+                console.log('다음페이지를 로딩중입니다.');
+            }
+        }
+    });
+
+    function fetchMoreData() {
+        var param = {};
+        if (pageToken != 0 && pageToken != null) {
+            param.pageToken = pageToken;
+        }
+
+        console.log('/api/youtube/' + videoId + '/comments');
+        $.ajax({
+            url: '/api/youtube/' + videoId + '/comments',
+            method: 'GET',
+            data: param,
+            dataType: 'json',
+            success: handleData,
+            error: function (request, status, error) {
+                console.log("code: " + request.status)
+                console.log("message: " + request.responseText)
+                console.log("error: " + error);
+            }
+        });
+    }
+
+    function handleData(data) {
+        updatePageToken(data.pageToken.nextPageToken);
+        appendCommentsAndReplies(data.data);
+    }
+
+    function appendCommentsAndReplies(data) {
+        var commentsContainer = $('#comments-container');
+        var str = '';
+
+        $.each(data, function (i) {
+            // 댓글 생성
+            str += '<div class="d-flex flex-start mt-3">';
+            str += '<img class="rounded-circle shadow-1-strong me-3" width="30" height="30" src="' + data[i].comment.authorProfileImageUrl + '">';
+            str += '<div class="flex-grow-1 flex-shrink-1">';
+
+            var commentDiv = createCommentElement(data[i].comment);
+            str += commentDiv;
+
+            // 답글 생성
+            if (data[i].replies != null) {
+                var replyContainer = createReplyContainer(data[i].replies);
+                str += replyContainer;
+            }
+
+            var closeDiv = '</div></div>';
+            str += closeDiv;
+        });
+
+        commentsContainer.append(str);
+
+        loading = false;
+    }
+
+    function createCommentElement(comment) {
+        var str = '<div>';
+        str += '<div class="d-flex justify-content-start align-items-center">';
+        str += '<p class="mb-1">' + comment.authorDisplayName + ' <span class="small">- ' + comment.publishedAt + '</span></p>';
+        str += '<div><i class="fa-regular fa-thumbs-up ml-2"></i><span class="small"> ' + comment.likeCount + '</span></div>';
+        str += '</div>';
+        str += '<p class="small mb-0">' + comment.comment + '</p>';
+        str += '</div>';
+        return str;
+    }
+
+    function createReplyContainer(replies) {
+        var str = '';
+
+        replies.forEach(function (reply) {
+            str += '<div class="d-flex flex-start mt-3">';
+            str += '<img class="rounded-circle shadow-1-strong me-3" width="30" height="30" src="' + reply.authorProfileImageUrl + '">';
+            str += '<div class="flex-grow-1 flex-shrink-1">';
+            str += '<div>';
+            str += '<div class="d-flex justify-content-between align-items-center">';
+            str += '<p class="mb-1">' + reply.authorDisplayName + ' <span class="small">- ' + reply.publishedAt + '</span></p>';
+            str += '</div>';
+            str += '<p class="small mb-0">' + reply.comment + '</p>';
+            str += '</div></div></div>';
+        });
+
+        return str;
+    }
+
+    function updatePageToken(nextPageToken) {
+        console.log('pageToken = ' + nextPageToken);
+        pageToken = nextPageToken;
     }
 </script>
 </body>
