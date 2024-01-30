@@ -75,7 +75,7 @@
 
             for (var j = i; j < i + colCountInRow && j < e; j++) {
                 str += '<div class="col-12 col-md-6 col-lg-4 col-xl-3">';
-                str += '<a href="/video/' + videos[j].videoId + '" class="card card-video border-0 bg-transparent mb-4 link-underline link-underline-opacity-0">';
+                str += '<a href="/watch?videoId=' + videos[j].videoId + '" class="card card-video border-0 bg-transparent mb-4 link-underline link-underline-opacity-0">';
                 str += '<img src="' + videos[j].videoThumbnailUrl + '" class="img-fluid rounded">';
                 str += '<div class="card-video-details d-flex mt-2"><div class="me-2">';
                 str += '<img src="' + videos[j].channelThumbnailUrl + '" class="rounded-circle" width="40" alt=""></div>';
