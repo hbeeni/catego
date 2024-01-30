@@ -13,7 +13,7 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="home.html" th:href="@{/}">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span></a>
@@ -39,26 +39,10 @@
         </div>
 
         <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" href="#">
+        <li class="nav-item" th:each="folder : ${folders}">
+            <a class="nav-link" href="#" th:href="@{/folder/{folderId} (folderId=${folder.folderId})}">
                 <i class="fas fa-fw fa-folder"></i>
-                <span>개발</span>
-            </a>
-        </li>
-
-        <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>영어</span>
-            </a>
-        </li>
-
-        <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>요리</span>
+                <span th:text="${folder.folderName}">개발</span>
             </a>
         </li>
 
@@ -72,5 +56,20 @@
     </ul>
     <!-- End of Sidebar -->
 </aside>
+<script id="sidebar-js">
+    document.addEventListener("DOMContentLoaded", function () {
+        var navItems = document.querySelectorAll(".nav-item");
+
+        // 현재 URL과 일치하는 nav-item을 찾아 active 클래스 추가
+        var currentUrl = window.location.pathname;
+
+        navItems.forEach(function (navItem) {
+            var href = navItem.querySelector("a").getAttribute("href");
+            if (currentUrl === href) {
+                navItem.classList.add("active");
+            }
+        });
+    });
+</script>
 </body>
 </html>

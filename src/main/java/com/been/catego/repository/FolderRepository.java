@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface FolderRepository extends JpaRepository<Folder, Long> {
 
-    List<Folder> findByUser_Id(Long userId);
+    List<Folder> findAllByUser_IdOrderByNameAsc(Long userId);
 
     @Query("select f From Folder f " +
             "join fetch f.folderChannels fc " +
