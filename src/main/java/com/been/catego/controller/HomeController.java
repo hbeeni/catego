@@ -26,8 +26,6 @@ public class HomeController {
         WithPageTokenResponse<List<ChannelWithFolderNamesResponse>> result =
                 channelService.findSubscriptionChannelsWithFolderNames(principalDetails.getId(), pageToken, 10);
 
-        model.addAttribute("profileImageUrl", principalDetails.getProfileImageUrl());
-        model.addAttribute("nickname", principalDetails.getNickname());
         model.addAttribute("channels", result.data());
         model.addAttribute("pageToken", result.pageToken());
 
