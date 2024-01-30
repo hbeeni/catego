@@ -45,7 +45,7 @@ public class ChannelService {
 
     private List<ChannelWithFolderNamesResponse> getChannelResponsesSortedByChannelTitle(Long userId,
                                                                                          List<Channel> youTubeChannels) {
-        List<Folder> folders = folderRepository.findByUser_Id(userId);
+        List<Folder> folders = folderRepository.findAllByUser_IdOrderByNameAsc(userId);
         Map<String, List<FolderChannel>> channelIdToFolderChannelsMap =
                 getChannelIdToFolderChannelsMap(toFolderIds(folders));
 

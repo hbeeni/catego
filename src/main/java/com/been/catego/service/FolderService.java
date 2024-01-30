@@ -43,6 +43,13 @@ public class FolderService {
     private final YouTubeApiService youTubeApiService;
 
     @Transactional(readOnly = true)
+    public List<FolderResponse> getAllFolderInfoByUserId(Long userId) {
+        return folderRepository.findAllByUser_IdOrderByNameAsc(userId).stream()
+                .map(FolderResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public FolderResponse getFolderInfo(Long folderId, Long userId) {
         Folder folder = folderRepository.findFolderByIdAndUserId(folderId, userId)
                 .orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_FOLDER));
