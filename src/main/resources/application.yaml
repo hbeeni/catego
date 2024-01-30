@@ -32,6 +32,7 @@ spring:
               - email
               - profile
               - https://www.googleapis.com/auth/youtube.readonly
+              - https://www.googleapis.com/auth/youtube.force-ssl
 
 youtube:
   api:

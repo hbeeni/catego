@@ -1,5 +1,6 @@
 package com.been.catego.service;
 
+import com.been.catego.dto.response.CommentWithRepliesResponse;
 import com.been.catego.dto.response.PageTokenResponse;
 import com.been.catego.dto.response.SubscriptionResponse;
 import com.been.catego.dto.response.VideoPlayerDetailResponse;
@@ -8,8 +9,10 @@ import com.been.catego.exception.CustomException;
 import com.been.catego.exception.ErrorMessages;
 import com.been.catego.util.YouTubeApiUtil;
 import com.been.catego.util.YoutubeConvertUtils;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Channel;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
@@ -23,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.been.catego.service.YouTubePart.ID;
+import static com.been.catego.service.YouTubePart.REPLIES;
 import static com.been.catego.service.YouTubePart.SNIPPET;
 import static com.been.catego.service.YouTubePart.STATISTICS;
 import static com.been.catego.service.YouTubePart.convertToPartStrings;
@@ -166,6 +171,31 @@ public class YouTubeApiService {
             Channel channel = getChannelById(video.getSnippet().getChannelId());
 
             return VideoPlayerDetailResponse.from(video, channel);
+        } catch (IOException e) {
+            throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
+        }
+    }
+
+    public WithPageTokenResponse<List<CommentWithRepliesResponse>> getCommentsWithReplies(String videoId,
+                                                                                          String pageToken) {
+        try {
+            YouTube.CommentThreads.List commentThreadsList = youTube.commentThreads()
+                    .list(convertToPartStrings(ID, SNIPPET, REPLIES));
+            youtubeApiUtil.setYouTubeRequest(commentThreadsList);
+            commentThreadsList.setVideoId(videoId);
+            commentThreadsList.setTextFormat("plainText");
+            commentThreadsList.setPageToken(pageToken);
+
+            CommentThreadListResponse commentThreadListResponse = commentThreadsList.execute();
+            List<CommentWithRepliesResponse> data = commentThreadListResponse.getItems().stream()
+                    .map(CommentWithRepliesResponse::from)
+                    .toList();
+            PageTokenResponse pageTokenResponse = new PageTokenResponse(null,
+                    commentThreadListResponse.getNextPageToken());
+
+            return new WithPageTokenResponse<>(data, pageTokenResponse);
+        } catch (GoogleJsonResponseException e) {
+            throw new CustomException(e.getMessage());
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }

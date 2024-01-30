@@ -13,6 +13,7 @@ public enum YouTubePart {
     CONTENT_DETAILS("contentDetails"),
     ID("id"),
     PLAYER("player"),
+    REPLIES("replies"),
     SNIPPET("snippet"),
     STATISTICS("statistics"),
     SUBSCRIBER_SNIPPET("subscriberSnippet");
