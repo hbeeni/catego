@@ -12,8 +12,7 @@ public record VideoResponse(
         String viewCount,
         String videoThumbnailUrl,
         String channelThumbnailUrl,
-        String publishedAt,
-        String playerTag
+        String publishedAt
 ) {
 
     public static VideoResponse from(Video video, Channel channel) {
@@ -26,8 +25,7 @@ public record VideoResponse(
                 YoutubeFormatUtils.formatViewCount(video.getStatistics().getViewCount()),
                 snippet.getThumbnails().getHigh().getUrl(),
                 channel.getSnippet().getThumbnails().getHigh().getUrl(),
-                YoutubeFormatUtils.formatDateTime(snippet.getPublishedAt()),
-                video.getPlayer().getEmbedHtml()
+                YoutubeFormatUtils.formatDateTime(snippet.getPublishedAt())
         );
     }
 }

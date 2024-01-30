@@ -2,6 +2,7 @@ package com.been.catego.service;
 
 import com.been.catego.dto.response.PageTokenResponse;
 import com.been.catego.dto.response.SubscriptionResponse;
+import com.been.catego.dto.response.VideoPlayerDetailResponse;
 import com.been.catego.dto.response.WithPageTokenResponse;
 import com.been.catego.exception.CustomException;
 import com.been.catego.exception.ErrorMessages;
@@ -12,6 +13,7 @@ import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
+import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.been.catego.service.YouTubePart.PLAYER;
 import static com.been.catego.service.YouTubePart.SNIPPET;
 import static com.been.catego.service.YouTubePart.STATISTICS;
 import static com.been.catego.service.YouTubePart.convertToPartStrings;
@@ -100,6 +101,10 @@ public class YouTubeApiService {
         }
     }
 
+    private Channel getChannelById(String channelId) {
+        return getChannelsByIds(List.of(channelId)).get(0);
+    }
+
     /**
      * part 기본 값: snippet, statistics
      */
@@ -125,10 +130,10 @@ public class YouTubeApiService {
     }
 
     /**
-     * part 기본 값: snippet, statistics, player
+     * part 기본 값: snippet, statistics
      */
     public VideoListResponse getVideoListResponseByChannelId(String channelId, long maxResult) {
-        return getVideoListResponseByChannelId(channelId, maxResult, SNIPPET, STATISTICS, PLAYER);
+        return getVideoListResponseByChannelId(channelId, maxResult, SNIPPET, STATISTICS);
     }
 
     /**
@@ -146,6 +151,21 @@ public class YouTubeApiService {
             videoList.setId(videoIds);
 
             return videoList.execute();
+        } catch (IOException e) {
+            throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
+        }
+    }
+
+    public VideoPlayerDetailResponse getVideoDetailForVideoPlayer(String videoId) {
+        try {
+            YouTube.Videos.List videoList = youTube.videos().list(convertToPartStrings(SNIPPET, STATISTICS));
+            youtubeApiUtil.setYouTubeRequest(videoList);
+            videoList.setId(List.of(videoId));
+
+            Video video = videoList.execute().getItems().get(0);
+            Channel channel = getChannelById(video.getSnippet().getChannelId());
+
+            return VideoPlayerDetailResponse.from(video, channel);
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }
