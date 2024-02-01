@@ -12,7 +12,7 @@ import com.been.catego.exception.ErrorMessages;
 import com.been.catego.repository.FolderChannelRepository;
 import com.been.catego.repository.FolderRepository;
 import com.google.api.services.youtube.model.Channel;
-import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,13 +57,14 @@ public class ChannelService {
 
     public WithPageTokenResponse<List<VideoResponse>> getVideosForChannel(String channelId, int maxResult,
                                                                           String pageToken) {
-        SearchListResponse searchListResponse =
-                youTubeApiService.searchVideosByChannelId(channelId, maxResult, pageToken);
+        PlaylistItemListResponse playlistItemListResponse =
+                youTubeApiService.getVideosByChannelId(channelId, maxResult, pageToken);
 
-        PageTokenResponse pageTokenResponse = new PageTokenResponse(searchListResponse.getPrevPageToken(),
-                searchListResponse.getNextPageToken());
+        PageTokenResponse pageTokenResponse = new PageTokenResponse(playlistItemListResponse.getPrevPageToken(),
+                playlistItemListResponse.getNextPageToken());
 
-        List<VideoResponse> data = youTubeApiService.getVideosByVideoIds(convertToVideoIds(searchListResponse)).stream()
+        List<VideoResponse> data = youTubeApiService.getVideosByIds(convertToVideoIds(playlistItemListResponse))
+                .stream()
                 .map(VideoResponse::from)
                 .toList();
         return new WithPageTokenResponse<>(data, pageTokenResponse);

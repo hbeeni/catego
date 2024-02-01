@@ -1,8 +1,8 @@
 package com.been.catego.util;
 
 import com.google.api.client.util.DateTime;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.ResourceId;
-import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.SubscriptionSnippet;
@@ -35,9 +35,15 @@ public final class YoutubeConvertUtils {
                 .toList();
     }
 
-    public static List<String> convertToVideoIds(SearchListResponse searchListResponse) {
-        return searchListResponse.getItems().stream()
-                .map(searchResult -> searchResult.getId().getVideoId())
+    public static List<String> convertToVideoIds(PlaylistItemListResponse playlistItemListResponse) {
+        return playlistItemListResponse.getItems().stream()
+                .map(playlistItem -> playlistItem.getSnippet().getResourceId().getVideoId())
                 .toList();
+    }
+
+    public static String convertToUploadPlaylistId(String channelId) {
+        char[] chars = channelId.toCharArray();
+        chars[1] = 'U';
+        return new String(chars);
     }
 }
