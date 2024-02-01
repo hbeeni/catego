@@ -4,6 +4,7 @@ import com.been.catego.domain.Channel;
 import com.been.catego.domain.Folder;
 import com.been.catego.domain.FolderChannel;
 import com.been.catego.dto.ChannelDto;
+import com.been.catego.dto.response.FolderInfoWithChannelResponse;
 import com.been.catego.dto.response.FolderResponse;
 import com.been.catego.dto.response.SubscriptionResponse;
 import com.been.catego.dto.response.VideoResponse;
@@ -43,9 +44,12 @@ public class FolderService {
     private final YouTubeApiService youTubeApiService;
 
     @Transactional(readOnly = true)
-    public List<FolderResponse> getAllFolderInfoByUserId(Long userId) {
-        return folderRepository.findAllByUser_IdOrderByNameAsc(userId).stream()
-                .map(FolderResponse::from)
+    public List<FolderInfoWithChannelResponse> getAllFolderInfoWithChannelsByUserId(Long userId) {
+        List<Folder> folders = folderRepository.findAllByUser_IdOrderByNameAsc(userId);
+        setFolderChannels(folders);
+
+        return folders.stream()
+                .map(FolderInfoWithChannelResponse::from)
                 .toList();
     }
 
@@ -174,6 +178,21 @@ public class FolderService {
                 });
 
         return channels;
+    }
+
+    private void setFolderChannels(List<Folder> folders) {
+        Map<Long, List<FolderChannel>> folderChannelMap = findFolderIdToFolderChannelMap(toFolderIds(folders));
+        folders.forEach(f -> f.setFolderChannels(folderChannelMap.get(f.getId())));
+    }
+
+    private List<Long> toFolderIds(List<Folder> folders) {
+        return folders.stream().map(Folder::getId).toList();
+    }
+
+    private Map<Long, List<FolderChannel>> findFolderIdToFolderChannelMap(List<Long> folderIds) {
+        List<FolderChannel> folderChannels = folderChannelRepository.findAllByFolderIdIn(folderIds);
+        return folderChannels.stream()
+                .collect(Collectors.groupingBy(folderChannel -> folderChannel.getFolder().getId()));
     }
 
     private List<String> getChannelIdsForFolder(Long userId, Long folderId) {
