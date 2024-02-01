@@ -1,25 +1,240 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{layout/layout-file :: layout (~{::title}, ~{}, ~{::main}, ~{::script})}"
+      xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+<head>
     <meta charset="UTF-8">
     <title>CATEGO</title>
 </head>
 
 <body>
-<header th:replace="~{layout/header :: header}">헤더</header>
+<main class="container" style="width: 60%">
+    <div id="video-player">
+        <div class="mt-3 ratio ratio-16x9">
+            <div id="player" class="rounded-3"></div>
+        </div>
+        <div>
+            <h3 class="mt-4 fw-bold" th:text="${videoPlayer.videoName}">Build simple web environment for html, css &
+                javascript</h3>
+            <div class="d-flex justify-content-start">
+                <div class="me-2 flex-column">
+                    <img src="/images/2-2.jpg" th:src="${videoPlayer.channelThumbnailUrl}" class="rounded-circle"
+                         width="40">
+                </div>
+                <div class="me-2 flex-column align-self-center">
+                    <div class="fw-semibold" th:text="${videoPlayer.channelName}">CodeWithEase</div>
+                </div>
+                <div class="me-1 flex-column align-self-center">
+                    <div class="text-secondary" style="font-size: smaller;"
+                         th:text="|구독자 ${videoPlayer.subscriberCount}명|">
+                        구독자 12만명
+                    </div>
+                </div>
+            </div>
+            <pre id="videoDescription" class="p-3 rounded mt-3 mb-0" style="background: #F2F2F2"
+                 th:text="${videoPlayer.videoDescription}">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante
+            dapibus diam.
+            Sed nisi.
+        </pre>
+            <button type="button" id="toggleDescription" class="btn">더보기</button>
+            <h5 class="mt-4 fw-semibold" th:text="|댓글 ${videoPlayer.commentCount}개|">댓글 925개</h5>
+            <section class="gradient-custom mt-3">
+                <div id="comments-container" class="row d-flex justify-content-start">
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
 
-<div id="wrapper">
-    <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
-    <main class="container" style="width: 60%" th:insert="~{layout/video-player :: #video-player}"></main>
-</div>
+<script id="video-player-js" th:inline="javascript">
+    var fullDescription;
+    var tag = document.createElement('script');
 
-<!--/* Scripts */-->
-<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-<!--/* 페이지 전용 스크립트 */-->
-<script th:replace="~{layout/sidebar :: #sidebar-js}"></script>
-<script th:replace="~{layout/video-player :: #video-player-js}"></script>
-<script th:replace="~{layout/video-player :: #video-player-comments-js}"></script>
+    var player;
+
+    $(document).ready(function () {
+        // 초기에는 간략히 보이도록 설정
+        fullDescription = $('#videoDescription').text();
+        toggleDescription(3); // 3줄까지 보이도록 설정
+
+        // 더보기/간략히 버튼 클릭 시 이벤트 처리
+        $('#toggleDescription').click(function () {
+            if ($(this).text() === '더보기') {
+                toggleDescription(); // 전체 보기
+            } else {
+                toggleDescription(3); // 간략히 보기
+            }
+        });
+    });
+
+    function toggleDescription(lines) {
+        var description = $('#videoDescription');
+        var toggleButton = $('#toggleDescription');
+
+        if (lines) {
+            // 지정된 줄 수까지만 보이도록 설정
+            var truncatedText = fullDescription.split('\n').slice(0, lines).join('\n');
+            description.text(truncatedText);
+            toggleButton.text('더보기');
+        } else {
+            // 전체 내용 보이도록 설정
+            description.text(fullDescription);
+            toggleButton.text('간략히');
+        }
+    }
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '',
+            width: '',
+            videoId: [[${videoPlayer.videoId}]],
+            playerVars: {
+                'rel': 0, //연관동영상 표시여부(0:표시안함)
+                'controls': 1, //플레이어 컨트롤러 표시여부(0:표시안함)
+                'autoplay': 1, //자동재생 여부(1:자동재생 함, mute와 함께 설정)
+                'mute': 0, //음소거여부(1:음소거 함)
+                'loop': 0, //반복재생여부(1:반복재생 함)
+                'playsinline': 1
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+    var done = false;
+
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING && !done) {
+            setTimeout(stopVideo, 6000);
+            done = true;
+        }
+    }
+
+    function stopVideo() {
+        player.stopVideo();
+    }
+</script>
+
+<script id="video-player-comments-js" th:inline="javascript">
+    var videoId = [[${videoPlayer.videoId}]];
+    var pageToken = 0;
+    var loading = false;    //중복실행여부 확인 변수
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchMoreData()
+    });
+
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + 200 >= $(document).height() - $(window).height()) {
+            if (!loading && pageToken != null)    //실행 가능 상태라면?
+            {
+                loading = true; //실행 불가능 상태로 변경
+                fetchMoreData();
+            } else            //실행 불가능 상태라면?
+            {
+                console.log('다음페이지를 로딩중입니다.');
+            }
+        }
+    });
+
+    function fetchMoreData() {
+        var param = {};
+        if (pageToken != 0 && pageToken != null) {
+            param.pageToken = pageToken;
+        }
+
+        console.log('/api/youtube/' + videoId + '/comments');
+        $.ajax({
+            url: '/api/youtube/' + videoId + '/comments',
+            method: 'GET',
+            data: param,
+            dataType: 'json',
+            success: handleData,
+            error: function (request, status, error) {
+                console.log("code: " + request.status)
+                console.log("message: " + request.responseText)
+                console.log("error: " + error);
+            }
+        });
+    }
+
+    function handleData(data) {
+        updatePageToken(data.pageToken.nextPageToken);
+        appendCommentsAndReplies(data.data);
+    }
+
+    function appendCommentsAndReplies(data) {
+        var commentsContainer = $('#comments-container');
+        var str = '';
+
+        $.each(data, function (i) {
+            // 댓글 생성
+            str += '<div class="d-flex flex-start mt-3">';
+            str += '<img class="rounded-circle shadow-1-strong me-3" width="30" height="30" src="' + data[i].comment.authorProfileImageUrl + '">';
+            str += '<div class="flex-grow-1 flex-shrink-1">';
+
+            var commentDiv = createCommentElement(data[i].comment);
+            str += commentDiv;
+
+            // 답글 생성
+            if (data[i].replies != null) {
+                var replyContainer = createReplyContainer(data[i].replies);
+                str += replyContainer;
+            }
+
+            var closeDiv = '</div></div>';
+            str += closeDiv;
+        });
+
+        commentsContainer.append(str);
+
+        loading = false;
+    }
+
+    function createCommentElement(comment) {
+        var str = '<div>';
+        str += '<div class="d-flex justify-content-start align-items-center">';
+        str += '<p class="mb-1">' + comment.authorDisplayName + ' <span class="small">- ' + comment.publishedAt + '</span></p>';
+        str += '<div><i class="fa-regular fa-thumbs-up ml-2"></i><span class="small"> ' + comment.likeCount + '</span></div>';
+        str += '</div>';
+        str += '<p class="small mb-0">' + comment.comment + '</p>';
+        str += '</div>';
+        return str;
+    }
+
+    function createReplyContainer(replies) {
+        var str = '';
+
+        replies.forEach(function (reply) {
+            str += '<div class="d-flex flex-start mt-3">';
+            str += '<img class="rounded-circle shadow-1-strong me-3" width="30" height="30" src="' + reply.authorProfileImageUrl + '">';
+            str += '<div class="flex-grow-1 flex-shrink-1">';
+            str += '<div>';
+            str += '<div class="d-flex justify-content-between align-items-center">';
+            str += '<p class="mb-1">' + reply.authorDisplayName + ' <span class="small">- ' + reply.publishedAt + '</span></p>';
+            str += '</div>';
+            str += '<p class="small mb-0">' + reply.comment + '</p>';
+            str += '</div></div></div>';
+        });
+
+        return str;
+    }
+
+    function updatePageToken(nextPageToken) {
+        console.log('pageToken = ' + nextPageToken);
+        pageToken = nextPageToken;
+    }
+</script>
 </body>
 </html>

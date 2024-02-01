@@ -1,29 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{layout/layout-file :: layout (~{::title}, ~{}, ~{::#content-wrapper}, ~{::script})}"
+      xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+<head>
     <meta charset="UTF-8">
     <title>CATEGO</title>
 </head>
 
 <body>
-<header th:replace="~{layout/header :: header}">헤더</header>
-
-<div id="wrapper">
-    <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
+<div id="content-wrapper">
     <div id="folder-id" hidden th:text="${folderId}"></div>
-    <div id="content-wrapper">
-        <div th:replace="~{layout/folder-top-navbar :: .navbar}">폴더 상단 네비게이션 바</div>
-        <main class="container d-flex justify-content-center"
-              th:insert="~{layout/video-list :: .page-content}"></main>
-    </div>
+
+    <!-- nav bar -->
+    <nav class="navbar bg-body-tertiary px-3 mb-3 static-top shadow">
+        <span class="navbar-brand">
+            <div class="d-flex m-1">
+                <h4 class="fw-semibold mb-0 me-2" th:text="${folder.folderName}">개발</h4>
+                <div class="d-flex align-items-center me-3" th:text="|${folder.channelCount} channels|">3 channels</div>
+            </div>
+        </span>
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a href="#" th:href="@{/folder/{folderId}/edit (folderId=${folderId})}" class="text-success nav-link">
+                    <i class="fa-solid fa-pencil"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="text-danger nav-link" data-toggle="tooltip" data-placement="top"
+                   data-bs-toggle="modal" data-bs-target="#deleteFolderModal">
+                    <i class="fa-solid fa-xmark"></i></a>
+            </li>
+        </ul>
+
+        <!-- Delete Modal start -->
+        <div class="modal fade" id="deleteFolderModal" tabindex="-1" aria-labelledby="deleteFolderModal"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteFolderModalLabel">Delete folder</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div th:text="|${folder.folderName}을(를) 삭제하시겠습니까?|">개발을(를) 삭제하시겠습니까?</div>
+                        <div>경고: 폴더를 삭제하면 되돌릴 수 없습니다.</div>
+                    </div>
+                    <form method="post" action="#" th:action="@{/folder/{folderId}/delete (folderId=${folderId})}">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Delete Modal end -->
+    </nav>
+
+    <main class="container d-flex justify-content-center"
+          th:insert="~{layout/video-list :: .page-content}"></main>
 </div>
 
-<!--/* Scripts */-->
-<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
-
-<!--/* 페이지 전용 스크립트 */-->
-<script th:replace="~{layout/sidebar :: #sidebar-js}"></script>
 <script>
     var videos;
     var count = 20;

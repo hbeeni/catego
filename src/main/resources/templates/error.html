@@ -1,22 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{layout/layout-file :: layout (~{::title}, ~{}, ~{::main}, ~{})}"
+      xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+<head>
     <meta charset="UTF-8">
     <title th:text="${error}">CATEGO</title>
 </head>
 
 <body>
-<header th:replace="~{layout/header :: header}">헤더</header>
-
-<div id="wrapper">
-    <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
-    <main id="content-wrapper" th:insert="~{layout/error :: error_info (${status}, ${error}, '오류가 발생했습니다.')}"></main>
-</div>
-
-<!--/* Scripts */-->
-<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
-
-<!--/* 페이지 전용 스크립트 */-->
+<main id="content-wrapper" th:insert="~{layout/error :: error_info (${status}, ${error}, '오류가 발생했습니다.')}"></main>
 </body>
 </html>

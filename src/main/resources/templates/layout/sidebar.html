@@ -40,13 +40,13 @@
 
         <!-- Nav Item -->
         <li class="nav-item" th:each="folder : ${folders}" th:with="cName=|collapseChannel${folderStat.index}|">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseChannel"
-               th:data-target="'#' + ${cName}" aria-expanded="true" aria-controls="collapseChannel"
-               th:aria-controls="${cName}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse"
+               data-target="#collapseChannel" th:data-target="'#' + ${cName}" aria-expanded="true"
+               aria-controls="collapseChannel" th:aria-controls="${cName}">
                 <i class="fas fa-fw fa-folder"></i>
                 <span th:text="${folder.folderName}">개발</span>
             </a>
-            <div id="collapseChannel" th:id="${cName}" class="collapse" aria-labelledby="headingChannel"
+            <div id="collapseChannel" th:id="${cName}" class="collapse" aria-labelledby="${cName}"
                  data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="#"
