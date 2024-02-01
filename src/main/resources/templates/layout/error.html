@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <title>error</title>
+</head>
+
+<body>
+<div class="container-fluid" th:fragment="error_info (status, error, message)">
+    <div class="text-center mt-2">
+        <div class="error mx-auto" data-text="4xx" th:data-text="${status}" th:text="${status}">
+            error
+        </div>
+        <p class="lead text-gray-800 mb-5" th:text="${error}">Page Not Found</p>
+        <pre class="text-gray-500 mb-0" th:text="${message}">It looks like you found a glitch in the matrix...</pre>
+        <a href="#" th:href="@{/}">← Back to Home</a>
+    </div>
+</div>
+</body>
+
+</html>
