@@ -44,6 +44,11 @@ public final class YoutubeFormatUtils {
         }
     }
 
+    public static String formatVideoCount(BigInteger videoCount) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        return decimalFormat.format(videoCount);
+    }
+
     private static String formatCount(BigInteger count, String format) {
         double n = count.doubleValue();
         DecimalFormat decimalFormat = new DecimalFormat(format);

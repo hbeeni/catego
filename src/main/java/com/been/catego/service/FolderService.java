@@ -7,7 +7,7 @@ import com.been.catego.dto.ChannelDto;
 import com.been.catego.dto.response.FolderInfoWithChannelResponse;
 import com.been.catego.dto.response.FolderResponse;
 import com.been.catego.dto.response.SubscriptionResponse;
-import com.been.catego.dto.response.VideoResponse;
+import com.been.catego.dto.response.VideoWithChannelResponse;
 import com.been.catego.exception.CustomException;
 import com.been.catego.exception.ErrorMessages;
 import com.been.catego.repository.ChannelRepository;
@@ -15,7 +15,6 @@ import com.been.catego.repository.FolderChannelRepository;
 import com.been.catego.repository.FolderRepository;
 import com.been.catego.repository.UserRepository;
 import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,7 +80,7 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoResponse> getFolderVideos(Long userId, Long folderId) {
+    public List<VideoWithChannelResponse> getFolderVideos(Long userId, Long folderId) {
         List<String> channelIds = getChannelIdsForFolder(userId, folderId);
 
         HashMap<String, com.google.api.services.youtube.model.Channel> youTubeChannelIdToYouTubeChannelMap =
@@ -90,16 +89,16 @@ public class FolderService {
                 .forEach(channel -> youTubeChannelIdToYouTubeChannelMap.put(channel.getId(), channel));
 
         //각 채널별로 비디오 50개씩 가져오기
-        List<VideoListResponse> videoListResponses = channelIds.stream()
+        List<List<Video>> videoLists = channelIds.stream()
                 .map(channelId -> youTubeApiService.getVideoListResponseByChannelId(channelId, 50L))
                 .toList();
 
         List<Video> videos = new ArrayList<>();
-        videoListResponses.forEach(videoListResponse -> videos.addAll(videoListResponse.getItems()));
+        videoLists.forEach(videos::addAll);
         videos.sort(new VideoPublishedAtComparator());
 
         return videos.stream()
-                .map(video -> VideoResponse.from(video,
+                .map(video -> VideoWithChannelResponse.from(video,
                         youTubeChannelIdToYouTubeChannelMap.get(video.getSnippet().getChannelId())))
                 .toList();
     }

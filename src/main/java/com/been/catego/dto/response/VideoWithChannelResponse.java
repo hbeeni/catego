@@ -1,25 +1,30 @@
 package com.been.catego.dto.response;
 
 import com.been.catego.util.YoutubeFormatUtils;
+import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 
-public record VideoResponse(
+public record VideoWithChannelResponse(
         String videoId,
         String videoName,
+        String channelName,
         String viewCount,
         String videoThumbnailUrl,
+        String channelThumbnailUrl,
         String publishedAt
 ) {
 
-    public static VideoResponse from(Video video) {
+    public static VideoWithChannelResponse from(Video video, Channel channel) {
         VideoSnippet snippet = video.getSnippet();
 
-        return new VideoResponse(
+        return new VideoWithChannelResponse(
                 video.getId(),
                 snippet.getTitle(),
+                snippet.getChannelTitle(),
                 YoutubeFormatUtils.formatViewCount(video.getStatistics().getViewCount()),
                 snippet.getThumbnails().getHigh().getUrl(),
+                channel.getSnippet().getThumbnails().getHigh().getUrl(),
                 YoutubeFormatUtils.formatDateTime(snippet.getPublishedAt())
         );
     }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/head :: common_head(~{::title}, (~{::link} ?: ~{}))}">
+    <meta charset="UTF-8">
+    <title>CATEGO</title>
+</head>
+
+<body>
+<header th:replace="~{layout/header :: header}">헤더</header>
+
+<div id="wrapper">
+    <aside th:replace="~{layout/sidebar :: aside}">왼쪽 사이드 바</aside>
+    <div id="content-wrapper">
+        <div th:replace="~{layout/channel-top-navbar :: .navbar}">폴더 상단 네비게이션 바</div>
+        <div id="channel-id" hidden th:text="${channel.channelId}"></div>
+        <main class="container d-flex justify-content-center"
+              th:insert="~{layout/video-list :: .page-content}"></main>
+    </div>
+</div>
+
+<!--/* Scripts */-->
+<script th:replace="~{layout/scripts :: script}">/* 공통 스크립트 */</script>
+
+<!--/* 페이지 전용 스크립트 */-->
+<script>
+    var pageToken = 0;
+    var loading = false;    //중복실행여부 확인 변수
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchMoreData()
+    });
+
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + 200 >= $(document).height() - $(window).height()) {
+            if (!loading && pageToken != null)    //실행 가능 상태라면?
+            {
+                loading = true; //실행 불가능 상태로 변경
+                fetchMoreData();
+            } else            //실행 불가능 상태라면?
+            {
+                console.log('다음페이지를 로딩중입니다.');
+            }
+        }
+    });
+
+    function fetchMoreData() {
+        var channelId = $('#channel-id').text();
+        var param = {};
+        if (pageToken != 0 && pageToken != null) {
+            param.pageToken = pageToken;
+        }
+
+        console.log('fetch more data');
+        $.ajax({
+            url: '/api/channels/' + channelId + '/videos',
+            method: 'GET',
+            data: param,
+            dataType: 'json',
+            success: handleData,
+            error: function (error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    }
+
+    function handleData(data) {
+        // 데이터 처리 로직
+        updatePageToken(data.pageToken.nextPageToken);
+        appendVideos(data.data);
+    }
+
+    function appendVideos(videos) {
+        console.log('append videos');
+        var colCountInRow = 4;
+        var str = '';
+
+        for (var i = 0; i < videos.length; i += colCountInRow) {
+            str += '<div class="row mt-2">';
+
+            for (var j = i; j < i + colCountInRow && j < videos.length; j++) {
+                str += '<div class="col-12 col-md-6 col-lg-4 col-xl-3">';
+                str += '<a href="/watch?videoId=' + videos[j].videoId + '" class="card card-video border-0 bg-transparent mb-4 link-underline link-underline-opacity-0">';
+                str += '<img src="' + videos[j].videoThumbnailUrl + '" class="img-fluid rounded">';
+                str += '<div class="card-video-details mt-2">';
+                str += '<div class="fw-semibold mb-2 video-name">' + videos[j].videoName + '</div>';
+                str += '<div class="text-secondary" style="font-size: smaller;">조회수 ' + videos[j].viewCount + '회 • ' + videos[j].publishedAt + '</div>';
+                str += '</div></a></div>';
+            }
+
+            str += '</div>';
+        }
+
+        $('#video-list').append(str);
+        loading = false;
+    }
+
+    function updatePageToken(nextPageToken) {
+        console.log('pageToken=' + nextPageToken);
+        pageToken = nextPageToken;
+    }
+</script>
+</body>
+</html>

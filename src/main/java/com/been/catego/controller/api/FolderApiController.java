@@ -2,7 +2,7 @@ package com.been.catego.controller.api;
 
 import com.been.catego.dto.PrincipalDetails;
 import com.been.catego.dto.response.SubscriptionResponse;
-import com.been.catego.dto.response.VideoResponse;
+import com.been.catego.dto.response.VideoWithChannelResponse;
 import com.been.catego.service.FolderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class FolderApiController {
     private final FolderService folderService;
 
     @GetMapping("/{folderId}")
-    public ResponseEntity<List<VideoResponse>> getFolderVideos(
+    public ResponseEntity<List<VideoWithChannelResponse>> getFolderVideos(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long folderId) {
         return ResponseEntity.ok(folderService.getFolderVideos(principalDetails.getId(), folderId));
