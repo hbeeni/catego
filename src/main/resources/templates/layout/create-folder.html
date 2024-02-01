@@ -34,5 +34,77 @@
         </div>
     </form>
 </div>
+<script id="create-folder-js">
+    var pageToken = 0;
+    var loading = false;    //중복실행여부 확인 변수
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchMoreData()
+    });
+
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + 200 >= $(document).height() - $(window).height()) {
+            if (!loading && pageToken != null)    //실행 가능 상태라면?
+            {
+                loading = true; //실행 불가능 상태로 변경
+                fetchMoreData();
+            } else            //실행 불가능 상태라면?
+            {
+                console.log('다음페이지를 로딩중입니다.');
+            }
+        }
+    });
+
+    function fetchMoreData() {
+        var param = {};
+        if (pageToken != 0 && pageToken != null) {
+            param.pageToken = pageToken;
+        }
+
+        $.ajax({
+            url: '/api/youtube/subscriptions',
+            method: 'GET',
+            data: param,
+            dataType: 'json',
+            success: handleData,
+            error: function (error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    }
+
+    function handleData(data) {
+        // 데이터 처리 로직
+        updatePageToken(data.pageToken.nextPageToken);
+        appendSubscriptions(data.data);
+    }
+
+    function appendSubscriptions(results) {
+        var str = '';
+
+        $.each(results, function (i) {
+            str += '<div class="row ms-1 mt-2 mb-4">';
+            str += '<div class="d-flex">';
+            str += '<div class="form-check">';
+            str += '<input class="form-check-input me-2" type="checkbox" name="channels" id="' +
+                results[i].channelId + '" value="' + results[i].channelId + '|' + results[i].channelTitle + '">';
+            str += '<label class="form-check-label" for="' + results[i].channelId + '">';
+            str += '<div class="d-flex flex-row align-self-center">';
+            str += '<img src="' + results[i].thumbnailUrl + '" class="rounded-circle me-2" height="32" width="32">';
+            str += '<div class="d-flex flex-column align-self-center">';
+            str += '<div class="fw-semibold">' + results[i].channelTitle + '</div>';
+            str += '</div></div></label></div></div></div>';
+        });
+
+        $('#create-folder-subscriptions').append(str);
+
+        loading = false;
+    }
+
+    function updatePageToken(nextPageToken) {
+        console.log(nextPageToken);
+        pageToken = nextPageToken;
+    }
+</script>
 </body>
 </html>
