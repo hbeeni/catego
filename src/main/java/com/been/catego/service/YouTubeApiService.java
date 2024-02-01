@@ -82,21 +82,11 @@ public class YouTubeApiService {
     }
 
     /**
-     * part 기본 값: snippet
+     * 알파벳 순으로 정렬된 결과를 반환합니다.
      */
     public SubscriptionListResponse getSubscriptionListResponse(String pageToken, long maxResult) {
-        return getSubscriptionListResponse(pageToken, maxResult, SNIPPET);
-    }
-
-    /**
-     * 알파벳 순으로 정렬된 결과를 반환합니다.
-     *
-     * @param parts contentDetails, id, snippet, subscriberSnippet
-     */
-    public SubscriptionListResponse getSubscriptionListResponse(String pageToken, long maxResult,
-                                                                YouTubePart... parts) {
         try {
-            YouTube.Subscriptions.List subscriptionsList = youTube.subscriptions().list(convertToPartStrings(parts));
+            YouTube.Subscriptions.List subscriptionsList = youTube.subscriptions().list(convertToPartStrings(SNIPPET));
 
             youtubeApiUtil.setYouTubeRequest(subscriptionsList);
             subscriptionsList.setMine(true);
@@ -116,20 +106,9 @@ public class YouTubeApiService {
         return getChannelsByIds(List.of(channelId)).get(0);
     }
 
-    /**
-     * part 기본 값: snippet, statistics
-     */
     public List<Channel> getChannelsByIds(List<String> channelIds) {
-        return getChannelsByIds(channelIds, SNIPPET, STATISTICS);
-    }
-
-    /**
-     * @param parts auditDetails, brandingSettings, contentDetails, contentOwnerDetails, id, localizations, snippet,
-     *              statistics, status, topicDetails
-     */
-    public List<Channel> getChannelsByIds(List<String> channelIds, YouTubePart... parts) {
         try {
-            YouTube.Channels.List channelsList = youTube.channels().list(convertToPartStrings(parts));
+            YouTube.Channels.List channelsList = youTube.channels().list(convertToPartStrings(SNIPPET, STATISTICS));
 
             youtubeApiUtil.setYouTubeRequest(channelsList);
             channelsList.setId(channelIds);

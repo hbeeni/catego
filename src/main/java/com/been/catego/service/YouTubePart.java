@@ -10,13 +10,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public enum YouTubePart {
 
-    CONTENT_DETAILS("contentDetails"),
     ID("id"),
-    PLAYER("player"),
     REPLIES("replies"),
     SNIPPET("snippet"),
-    STATISTICS("statistics"),
-    SUBSCRIBER_SNIPPET("subscriberSnippet");
+    STATISTICS("statistics");
 
     private final String partString;
 
