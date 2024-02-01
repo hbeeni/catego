@@ -13,7 +13,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
-import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.Video;
@@ -31,6 +31,7 @@ import static com.been.catego.service.YouTubePart.REPLIES;
 import static com.been.catego.service.YouTubePart.SNIPPET;
 import static com.been.catego.service.YouTubePart.STATISTICS;
 import static com.been.catego.service.YouTubePart.convertToPartStrings;
+import static com.been.catego.util.YoutubeConvertUtils.convertToUploadPlaylistId;
 import static com.been.catego.util.YoutubeConvertUtils.convertToVideoIds;
 
 @RequiredArgsConstructor
@@ -121,7 +122,7 @@ public class YouTubeApiService {
         }
     }
 
-    public List<Video> getVideosByVideoIds(List<String> videoIds) {
+    public List<Video> getVideosByIds(List<String> videoIds) {
         try {
             YouTube.Videos.List videoList = youTube.videos().list(convertToPartStrings(SNIPPET, STATISTICS));
 
@@ -137,10 +138,10 @@ public class YouTubeApiService {
     }
 
     public List<Video> getVideoListResponseByChannelId(String channelId, long maxResult) {
-        SearchListResponse searchListResponse = searchVideosByChannelId(channelId, maxResult);
-        List<String> videoIds = convertToVideoIds(searchListResponse);
+        PlaylistItemListResponse playlistItemListResponse = getVideosByChannelId(channelId, maxResult);
+        List<String> videoIds = convertToVideoIds(playlistItemListResponse);
 
-        return getVideosByVideoIds(videoIds);
+        return getVideosByIds(videoIds);
     }
 
     public VideoPlayerDetailResponse getVideoDetailForVideoPlayer(String videoId) {
@@ -185,22 +186,21 @@ public class YouTubeApiService {
         }
     }
 
-    private SearchListResponse searchVideosByChannelId(String channelId, long maxResult) {
-        return searchVideosByChannelId(channelId, maxResult, null);
+    private PlaylistItemListResponse getVideosByChannelId(String channelId, long maxResult) {
+        return getVideosByChannelId(channelId, maxResult, null);
     }
 
-    public SearchListResponse searchVideosByChannelId(String channelId, long maxResult, String pageToken) {
+    public PlaylistItemListResponse getVideosByChannelId(String channelId, long maxResult, String pageToken) {
         try {
-            YouTube.Search.List searchList = youTube.search().list(convertToPartStrings(SNIPPET));
 
-            youtubeApiUtil.setYouTubeRequest(searchList);
-            searchList.setChannelId(channelId);
-            searchList.setOrder("date");
-            searchList.setType(List.of("video"));
-            searchList.setMaxResults(maxResult);
-            searchList.setPageToken(pageToken);
+            YouTube.PlaylistItems.List playlistItmesList = youTube.playlistItems().list(convertToPartStrings(SNIPPET));
 
-            return searchList.execute();
+            youtubeApiUtil.setYouTubeRequest(playlistItmesList);
+            playlistItmesList.setPlaylistId(convertToUploadPlaylistId(channelId));
+            playlistItmesList.setMaxResults(maxResult);
+            playlistItmesList.setPageToken(pageToken);
+
+            return playlistItmesList.execute();
         } catch (GoogleJsonResponseException e) {
             throw new CustomException(e.getMessage());
         } catch (IOException e) {
