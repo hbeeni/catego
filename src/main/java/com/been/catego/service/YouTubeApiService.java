@@ -17,13 +17,13 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.been.catego.service.YouTubePart.ID;
@@ -47,6 +47,10 @@ public class YouTubeApiService {
     public List<Channel> findChannels(SubscriptionListResponse subscriptionListResponse) {
         List<String> subscriptionIds = YoutubeConvertUtils.convertToSubscriptionIds(subscriptionListResponse);
         return getChannelsByIds(subscriptionIds);
+    }
+
+    public Optional<Channel> findChannel(String channelId) {
+        return Optional.ofNullable(getChannelById(channelId));
     }
 
     public List<SubscriptionResponse> getAllSubscriptions() {
@@ -101,6 +105,8 @@ public class YouTubeApiService {
             subscriptionsList.setPageToken(pageToken);
 
             return subscriptionsList.execute();
+        } catch (GoogleJsonResponseException e) {
+            throw new CustomException(e.getMessage());
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }
@@ -129,36 +135,33 @@ public class YouTubeApiService {
             channelsList.setId(channelIds);
 
             return channelsList.execute().getItems();
+        } catch (GoogleJsonResponseException e) {
+            throw new CustomException(e.getMessage());
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }
     }
 
-    /**
-     * part 기본 값: snippet, statistics
-     */
-    public VideoListResponse getVideoListResponseByChannelId(String channelId, long maxResult) {
-        return getVideoListResponseByChannelId(channelId, maxResult, SNIPPET, STATISTICS);
-    }
-
-    /**
-     * @param parts contentDetails, fileDetails, id, liveStreamingDetails, localizations, player, processingDetails,
-     *              recordingDetails, snippet, statistics, status, suggestions, topicDetails
-     */
-    public VideoListResponse getVideoListResponseByChannelId(String channelId, long maxResult, YouTubePart... parts) {
+    public List<Video> getVideosByVideoIds(List<String> videoIds) {
         try {
-            SearchListResponse searchListResponse = searchVideosByChannelId(channelId, maxResult);
-            List<String> videoIds = convertToVideoIds(searchListResponse);
-
-            YouTube.Videos.List videoList = youTube.videos().list(convertToPartStrings(parts));
+            YouTube.Videos.List videoList = youTube.videos().list(convertToPartStrings(SNIPPET, STATISTICS));
 
             youtubeApiUtil.setYouTubeRequest(videoList);
             videoList.setId(videoIds);
 
-            return videoList.execute();
+            return videoList.execute().getItems();
+        } catch (GoogleJsonResponseException e) {
+            throw new CustomException(e.getMessage());
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }
+    }
+
+    public List<Video> getVideoListResponseByChannelId(String channelId, long maxResult) {
+        SearchListResponse searchListResponse = searchVideosByChannelId(channelId, maxResult);
+        List<String> videoIds = convertToVideoIds(searchListResponse);
+
+        return getVideosByVideoIds(videoIds);
     }
 
     public VideoPlayerDetailResponse getVideoDetailForVideoPlayer(String videoId) {
@@ -171,6 +174,8 @@ public class YouTubeApiService {
             Channel channel = getChannelById(video.getSnippet().getChannelId());
 
             return VideoPlayerDetailResponse.from(video, channel);
+        } catch (GoogleJsonResponseException e) {
+            throw new CustomException(e.getMessage());
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }
@@ -201,10 +206,11 @@ public class YouTubeApiService {
         }
     }
 
-    /**
-     * date 기준으로 정렬한 결과를 반환합니다.
-     */
     private SearchListResponse searchVideosByChannelId(String channelId, long maxResult) {
+        return searchVideosByChannelId(channelId, maxResult, null);
+    }
+
+    public SearchListResponse searchVideosByChannelId(String channelId, long maxResult, String pageToken) {
         try {
             YouTube.Search.List searchList = youTube.search().list(convertToPartStrings(SNIPPET));
 
@@ -213,8 +219,11 @@ public class YouTubeApiService {
             searchList.setOrder("date");
             searchList.setType(List.of("video"));
             searchList.setMaxResults(maxResult);
+            searchList.setPageToken(pageToken);
 
             return searchList.execute();
+        } catch (GoogleJsonResponseException e) {
+            throw new CustomException(e.getMessage());
         } catch (IOException e) {
             throw new CustomException(ErrorMessages.FAIL_TO_LOAD_YOUTUBE_DATA);
         }

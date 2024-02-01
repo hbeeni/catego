@@ -2,12 +2,17 @@ package com.been.catego.service;
 
 import com.been.catego.domain.Folder;
 import com.been.catego.domain.FolderChannel;
+import com.been.catego.dto.response.ChannelResponse;
 import com.been.catego.dto.response.ChannelWithFolderNamesResponse;
 import com.been.catego.dto.response.PageTokenResponse;
+import com.been.catego.dto.response.VideoResponse;
 import com.been.catego.dto.response.WithPageTokenResponse;
+import com.been.catego.exception.CustomException;
+import com.been.catego.exception.ErrorMessages;
 import com.been.catego.repository.FolderChannelRepository;
 import com.been.catego.repository.FolderRepository;
 import com.google.api.services.youtube.model.Channel;
+import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.been.catego.util.YoutubeConvertUtils.convertToVideoIds;
+
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class ChannelService {
 
@@ -28,7 +35,6 @@ public class ChannelService {
 
     private final YouTubeApiService youTubeApiService;
 
-    @Transactional(readOnly = true)
     public WithPageTokenResponse<List<ChannelWithFolderNamesResponse>> findSubscriptionChannelsWithFolderNames(
             Long userId, String pageToken, long maxResult) {
         //구독 채널 가져오기
@@ -40,6 +46,26 @@ public class ChannelService {
         PageTokenResponse pageTokenResponse = new PageTokenResponse(subscriptionListResponse.getPrevPageToken(),
                 subscriptionListResponse.getNextPageToken());
 
+        return new WithPageTokenResponse<>(data, pageTokenResponse);
+    }
+
+    public ChannelResponse getChannelInfo(String channelId) {
+        return youTubeApiService.findChannel(channelId)
+                .map(ChannelResponse::from)
+                .orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_CHANNEL));
+    }
+
+    public WithPageTokenResponse<List<VideoResponse>> getVideosForChannel(String channelId, int maxResult,
+                                                                          String pageToken) {
+        SearchListResponse searchListResponse =
+                youTubeApiService.searchVideosByChannelId(channelId, maxResult, pageToken);
+
+        PageTokenResponse pageTokenResponse = new PageTokenResponse(searchListResponse.getPrevPageToken(),
+                searchListResponse.getNextPageToken());
+
+        List<VideoResponse> data = youTubeApiService.getVideosByVideoIds(convertToVideoIds(searchListResponse)).stream()
+                .map(VideoResponse::from)
+                .toList();
         return new WithPageTokenResponse<>(data, pageTokenResponse);
     }
 
