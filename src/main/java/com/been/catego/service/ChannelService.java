@@ -42,7 +42,8 @@ public class ChannelService {
                 youTubeApiService.getSubscriptionListResponse(pageToken, maxResult);
         List<Channel> youTubeChannels = youTubeApiService.findChannels(subscriptionListResponse);
 
-        List<ChannelWithFolderNamesResponse> data = getChannelResponsesSortedByChannelTitle(userId, youTubeChannels);
+        List<ChannelWithFolderNamesResponse> data =
+                getChannelWithFolderNamesSortedByChannelTitle(userId, youTubeChannels);
         PageTokenResponse pageTokenResponse = new PageTokenResponse(subscriptionListResponse.getPrevPageToken(),
                 subscriptionListResponse.getNextPageToken());
 
@@ -70,8 +71,8 @@ public class ChannelService {
         return new WithPageTokenResponse<>(data, pageTokenResponse);
     }
 
-    private List<ChannelWithFolderNamesResponse> getChannelResponsesSortedByChannelTitle(Long userId,
-                                                                                         List<Channel> youTubeChannels) {
+    private List<ChannelWithFolderNamesResponse> getChannelWithFolderNamesSortedByChannelTitle(Long userId,
+                                                                                               List<Channel> youTubeChannels) {
         List<Folder> folders = folderRepository.findAllByUser_IdOrderByNameAsc(userId);
         Map<String, List<FolderChannel>> channelIdToFolderChannelsMap =
                 getChannelIdToFolderChannelsMap(toFolderIds(folders));
