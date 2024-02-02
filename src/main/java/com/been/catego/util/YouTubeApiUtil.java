@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -45,19 +46,22 @@ public class YouTubeApiUtil {
                 .getContext()
                 .getAuthentication();
 
-        if (authentication.getClass().isAssignableFrom(OAuth2AuthenticationToken.class)) {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-            String clientRegistrationId = oauthToken.getAuthorizedClientRegistrationId();
+        OAuth2AuthenticationException authenticationException = new OAuth2AuthenticationException("로그인이 필요합니다.");
 
-            OAuth2AuthorizedClient client =
-                    clientService.loadAuthorizedClient(clientRegistrationId, oauthToken.getName());
-            System.out.println("OAuth2AuthorizedClient = " + client);
-
-            if (client != null) {
-                return client.getAccessToken().getTokenValue();
-            }
+        if (!authentication.getClass().isAssignableFrom(OAuth2AuthenticationToken.class)) {
+            throw authenticationException;
         }
 
-        return null;
+        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+        String clientRegistrationId = oauthToken.getAuthorizedClientRegistrationId();
+
+        OAuth2AuthorizedClient client =
+                clientService.loadAuthorizedClient(clientRegistrationId, oauthToken.getName());
+
+        if (client == null) {
+            throw authenticationException;
+        }
+
+        return client.getAccessToken().getTokenValue();
     }
 }
