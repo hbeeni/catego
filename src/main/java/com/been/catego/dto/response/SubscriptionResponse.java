@@ -28,13 +28,4 @@ public final class SubscriptionResponse {
     public void setIncludedInFolderTrue() {
         includedInFolder = true;
     }
-
-    @Override
-    public String toString() {
-        return "SubscriptionResponse[" +
-                "channelId=" + channelId + ", " +
-                "channelTitle=" + channelTitle + ", " +
-                "thumbnailUrl=" + thumbnailUrl + ", " +
-                "isIncludedInFolder=" + includedInFolder + ']';
-    }
 }
