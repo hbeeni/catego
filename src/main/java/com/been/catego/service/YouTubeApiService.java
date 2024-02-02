@@ -46,8 +46,8 @@ public class YouTubeApiService {
     }
 
     public List<Channel> findChannels(SubscriptionListResponse subscriptionListResponse) {
-        List<String> subscriptionIds = YoutubeConvertUtils.convertToSubscriptionIds(subscriptionListResponse);
-        return getChannelsByIds(subscriptionIds);
+        List<String> subscriptionChannelIds = YoutubeConvertUtils.convertToSubscriptionIds(subscriptionListResponse);
+        return getChannelsByIds(subscriptionChannelIds);
     }
 
     public Optional<Channel> findChannel(String channelId) {
