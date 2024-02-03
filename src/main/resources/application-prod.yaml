@@ -1,0 +1,32 @@
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_IP}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+              - https://www.googleapis.com/auth/youtube.readonly
+              - https://www.googleapis.com/auth/youtube.force-ssl
+
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY}
