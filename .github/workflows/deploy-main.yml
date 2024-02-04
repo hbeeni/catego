@@ -28,15 +28,24 @@ jobs:
             options:
               ports: 8080
               env:
-                - DB_IP: ${{ secrets.DB_IP }}
-                - DB_PORT: ${{ secrets.DB_PORT }}
-                - DB_NAME: ${{ secrets.DB_NAME }}
-                - DB_USERNAME: ${{ secrets.DB_USERNAME }}
-                - DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-                - GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-                - GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-                - YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-                - SPRING_PROFILES_ACTIVE: ${{ secrets.SPRING_PROFILES_ACTIVE }}
+                - name: DB_IP
+                  var: ${{ secrets.DB_IP }}
+                - name: DB_PORT
+                  var: ${{ secrets.DB_PORT }}
+                - name: DB_NAME
+                  var: ${{ secrets.DB_NAME }}
+                - name: DB_USERNAME
+                  var: ${{ secrets.DB_USERNAME }}
+                - name: DB_PASSWORD
+                  var: ${{ secrets.DB_PASSWORD }}
+                - name: GOOGLE_CLIENT_ID
+                  var: ${{ secrets.GOOGLE_CLIENT_ID }}
+                - name: GOOGLE_CLIENT_SECRET
+                  var: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+                - name: YOUTUBE_API_KEY
+                  var: ${{ secrets.YOUTUBE_API_KEY }}
+                - name: SPRING_PROFILES_ACTIVE
+                  var: ${{ secrets.SPRING_PROFILES_ACTIVE }}            
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
