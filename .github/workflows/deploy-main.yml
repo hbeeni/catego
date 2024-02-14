@@ -45,7 +45,9 @@ jobs:
                 - name: YOUTUBE_API_KEY
                   var: ${{ secrets.YOUTUBE_API_KEY }}
                 - name: SPRING_PROFILES_ACTIVE
-                  var: ${{ secrets.SPRING_PROFILES_ACTIVE }}            
+                  var: ${{ secrets.SPRING_PROFILES_ACTIVE }} 
+                - name: TEST
+                  var: test
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
