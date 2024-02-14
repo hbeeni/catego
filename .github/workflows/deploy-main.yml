@@ -46,7 +46,6 @@ jobs:
                   var: ${{ secrets.YOUTUBE_API_KEY }}
                 - name: SPRING_PROFILES_ACTIVE
                   var: ${{ secrets.SPRING_PROFILES_ACTIVE }} 
-              start: ctype apply -f catego.yaml
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
