@@ -6,70 +6,69 @@
 </head>
 <body>
 <aside class="d-flex align-self-stretch">
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-        <!-- Divider -->
-        <hr class="sidebar-divider my-0">
-
-        <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" href="home.html" th:href="@{/}">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span></a>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" href="#" th:href="@{/folder/new}">
-                <i class="fa-solid fa-plus"></i>
-                <span>Create</span>
-            </a>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Folder
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">CATEGO</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
 
-        <!-- Nav Item -->
-        <li class="nav-item" th:each="folder : ${folders}" th:with="cName=|collapseChannel${folderStat.index}|">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse"
-               data-target="#collapseChannel" th:data-target="'#' + ${cName}" aria-expanded="true"
-               aria-controls="collapseChannel" th:aria-controls="${cName}">
-                <i class="fas fa-fw fa-folder"></i>
-                <span th:text="${folder.folderName}">개발</span>
-            </a>
-            <div id="collapseChannel" th:id="${cName}" class="collapse" aria-labelledby="${cName}"
-                 data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="#"
-                       th:href="@{/folder/{folderId} (folderId=${folder.folderId})}">Main</a>
-                    <div class="collapse-divider"></div>
-                    <h6 class="collapse-header">Channels</h6>
-                    <th:block th:each="channel : ${folder.channels}">
-                        <a class="collapse-item" href="#"
-                           th:href="@{/channel/{channelId} (channelId=${channel.channelId})}"
-                           th:text="${channel.channelTitle}">널널한 개발자</a>
-                    </th:block>
-                </div>
-            </div>
-        </li>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <!-- Sidebar -->
 
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block">
+                <!-- Divider -->
+                <hr class="sidebar-divider my-0">
 
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                <!-- Nav Item -->
+                <li class="nav-item">
+                    <a class="nav-link" href="home.html" th:href="@{/}">
+                        <i class="fa-solid fa-house me-1"></i>
+                        <span>Home</span></a>
+                </li>
+
+                <!-- Divider -->
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <!-- Nav Item -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/folder/new}">
+                        <i class="fa-solid fa-plus me-1"></i>
+                        <span>Create</span>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <!-- Nav Item -->
+                <li class="nav-item dropdown" th:each="folder : ${folders}"
+                    th:with="cName=|collapseChannel${folderStat.index}|">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <i class="fas fa-fw fa-folder me-1"></i>
+                        <span th:text="${folder.folderName}">개발</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"
+                               th:href="@{/folder/{folderId} (folderId=${folder.folderId})}">Main</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li th:each="channel : ${folder.channels}">
+                            <a class="dropdown-item" href="#"
+                               th:href="@{/channel/{channelId} (channelId=${channel.channelId})}"
+                               th:text="${channel.channelTitle}">채널1</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-    </ul>
+    </div>
     <!-- End of Sidebar -->
 </aside>
 <script id="sidebar-js">
