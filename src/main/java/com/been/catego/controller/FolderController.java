@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -35,16 +34,10 @@ public class FolderController {
 
     @PostMapping("/new")
     public String createFolder(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                               @ModelAttribute FolderRequest request,
-                               RedirectAttributes redirectAttributes) {
-        log.info("request = {}", request);
+                               @ModelAttribute FolderRequest request) {
 
         Map<String, ChannelDto> channelIdToChannelDtoMap = parseChannelString(request);
-
-        Long folderId =
-                folderService.createFolder(principalDetails.getId(), request.folderName(), channelIdToChannelDtoMap);
-        redirectAttributes.addAttribute("folderId", folderId);
-
+        folderService.createFolder(principalDetails.getId(), request.folderName(), channelIdToChannelDtoMap);
         return "redirect:/";
     }
 
@@ -60,16 +53,11 @@ public class FolderController {
     @PostMapping("/{folderId}/edit")
     public String editFolder(@AuthenticationPrincipal PrincipalDetails principalDetails,
                              @PathVariable Long folderId,
-                             @ModelAttribute FolderRequest request,
-                             RedirectAttributes redirectAttributes) {
-        log.info("request = {}", request);
+                             @ModelAttribute FolderRequest request) {
 
         Map<String, ChannelDto> channelIdToChannelDtoMap = parseChannelString(request);
-
         folderService.editFolder(folderId, principalDetails.getId(), request.folderName(), channelIdToChannelDtoMap);
-
-        redirectAttributes.addAttribute("folderId", folderId);
-        return "redirect:/folder/{folderId}";
+        return "redirect:/";
     }
 
     @PostMapping("/{folderId}/delete")

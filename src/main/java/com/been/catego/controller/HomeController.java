@@ -2,7 +2,7 @@ package com.been.catego.controller;
 
 import com.been.catego.dto.PrincipalDetails;
 import com.been.catego.dto.response.ChannelWithFolderNamesResponse;
-import com.been.catego.dto.response.WithPageTokenResponse;
+import com.been.catego.dto.response.DataWithPageTokenResponse;
 import com.been.catego.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +23,7 @@ public class HomeController {
     public String home(@AuthenticationPrincipal PrincipalDetails principalDetails,
                        @RequestParam(required = false) String pageToken,
                        Model model) {
-        WithPageTokenResponse<List<ChannelWithFolderNamesResponse>> result =
+        DataWithPageTokenResponse<List<ChannelWithFolderNamesResponse>> result =
                 channelService.findSubscriptionChannelsWithFolderNames(principalDetails.getId(), pageToken, 10);
 
         model.addAttribute("channels", result.data());

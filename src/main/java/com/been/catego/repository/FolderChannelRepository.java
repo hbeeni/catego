@@ -14,5 +14,5 @@ public interface FolderChannelRepository extends JpaRepository<FolderChannel, Lo
             + "join fetch fc.channel c "
             + "where f.id in :folderIds "
             + "order by c.name")
-    List<FolderChannel> findAllByFolderIdIn(@Param("folderIds") List<Long> folderIds);
+    List<FolderChannel> findAllByFolderIds(@Param("folderIds") List<Long> folderIds);
 }

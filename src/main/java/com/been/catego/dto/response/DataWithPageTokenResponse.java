@@ -1,6 +1,6 @@
 package com.been.catego.dto.response;
 
-public record WithPageTokenResponse<T>(
+public record DataWithPageTokenResponse<T>(
         T data,
         PageTokenResponse pageToken
 ) {

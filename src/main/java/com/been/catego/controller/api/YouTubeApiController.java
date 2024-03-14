@@ -1,8 +1,8 @@
 package com.been.catego.controller.api;
 
 import com.been.catego.dto.response.CommentWithRepliesResponse;
-import com.been.catego.dto.response.SubscriptionResponse;
-import com.been.catego.dto.response.WithPageTokenResponse;
+import com.been.catego.dto.response.DataWithPageTokenResponse;
+import com.been.catego.dto.response.SubscriptionChannelResponse;
 import com.been.catego.service.YouTubeApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +22,13 @@ public class YouTubeApiController {
     private final YouTubeApiService youTubeApiService;
 
     @GetMapping("/subscriptions")
-    public ResponseEntity<WithPageTokenResponse<List<SubscriptionResponse>>> getSubscriptions(
+    public ResponseEntity<DataWithPageTokenResponse<List<SubscriptionChannelResponse>>> getSubscriptions(
             @RequestParam(required = false) String pageToken) {
         return ResponseEntity.ok(youTubeApiService.getSubscriptionsWithPageToken(pageToken, 50));
     }
 
     @GetMapping("/{videoId}/comments")
-    public ResponseEntity<WithPageTokenResponse<List<CommentWithRepliesResponse>>> getComments(
+    public ResponseEntity<DataWithPageTokenResponse<List<CommentWithRepliesResponse>>> getComments(
             @PathVariable String videoId,
             @RequestParam(required = false) String pageToken) {
         return ResponseEntity.ok(youTubeApiService.getCommentsWithReplies(videoId, pageToken));

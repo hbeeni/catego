@@ -1,7 +1,7 @@
 package com.been.catego.interceptor;
 
 import com.been.catego.dto.PrincipalDetails;
-import com.been.catego.dto.response.FolderInfoWithChannelResponse;
+import com.been.catego.dto.response.FolderInfoWithChannelInfoResponse;
 import com.been.catego.service.FolderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,8 +25,9 @@ public class FolderListInterceptor implements HandlerInterceptor {
                     .getAuthentication()
                     .getPrincipal();
 
-            List<FolderInfoWithChannelResponse> folders =
-                    folderService.getAllFolderInfoWithChannelsByUserId(principalDetails.getId());
+            List<FolderInfoWithChannelInfoResponse> folders =
+                    folderService.getAllFoldersWithChannelsByUserId(principalDetails.getId());
+
             modelAndView.addObject("folders", folders);
         }
     }
