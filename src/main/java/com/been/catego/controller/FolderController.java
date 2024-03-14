@@ -45,16 +45,7 @@ public class FolderController {
                 folderService.createFolder(principalDetails.getId(), request.folderName(), channelIdToChannelDtoMap);
         redirectAttributes.addAttribute("folderId", folderId);
 
-        return "redirect:/folder/{folderId}";
-    }
-
-    @GetMapping("/{folderId}")
-    public String getFolderMain(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                @PathVariable Long folderId,
-                                Model model) {
-        model.addAttribute("folderId", folderId);
-        model.addAttribute("folder", folderService.getFolderInfo(folderId, principalDetails.getId()));
-        return "folder/folder";
+        return "redirect:/";
     }
 
     @GetMapping("/{folderId}/edit")

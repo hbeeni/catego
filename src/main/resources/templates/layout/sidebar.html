@@ -52,13 +52,25 @@
                         <i class="fas fa-fw fa-folder me-1"></i>
                         <span th:text="${folder.folderName}">개발</span>
                     </a>
+
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"
-                               th:href="@{/folder/{folderId} (folderId=${folder.folderId})}">Main</a>
+                        <li>
+                            <a href="#" th:href="@{/folder/{folderId}/edit (folderId=${folder.folderId})}" class="text-success dropdown-item">
+                                <i class="fa-solid fa-pencil"></i> 수정
+                            </a>
                         </li>
+                        <li>
+                            <form th:action="@{/folder/{folderId}/delete (folderId=${folder.folderId})}" method="post">
+                                <button class="text-danger dropdown-item">
+                                    <i class="fa-solid fa-xmark"></i> 삭제
+                                </button>
+                            </form>
+                        </li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
+
                         <li th:each="channel : ${folder.channels}">
                             <a class="dropdown-item" href="#"
                                th:href="@{/channel/{channelId} (channelId=${channel.channelId})}"
