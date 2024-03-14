@@ -1,7 +1,7 @@
 package com.been.catego.controller.api;
 
+import com.been.catego.dto.response.DataWithPageTokenResponse;
 import com.been.catego.dto.response.VideoResponse;
-import com.been.catego.dto.response.WithPageTokenResponse;
 import com.been.catego.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,9 @@ public class ChannelApiController {
     private final ChannelService channelService;
 
     @GetMapping("/{channelId}/videos")
-    public ResponseEntity<WithPageTokenResponse<List<VideoResponse>>> getVideosForChannel(
+    public ResponseEntity<DataWithPageTokenResponse<List<VideoResponse>>> getVideosForChannel(
             @PathVariable String channelId, @RequestParam(defaultValue = "20") int maxResult,
             @RequestParam(required = false) String pageToken) {
-        return ResponseEntity.ok(channelService.getVideosForChannel(channelId, maxResult, pageToken));
+        return ResponseEntity.ok(channelService.getVideosOfChannel(channelId, maxResult, pageToken));
     }
 }

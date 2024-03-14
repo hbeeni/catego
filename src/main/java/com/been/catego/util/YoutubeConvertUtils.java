@@ -17,11 +17,6 @@ public final class YoutubeConvertUtils {
     private YoutubeConvertUtils() {
     }
 
-    public static LocalDateTime convertToLocalDateTime(DateTime dateTime) {
-        Instant instant = Instant.ofEpochMilli(dateTime.getValue());
-        return LocalDateTime.ofInstant(instant, ZoneId.of("GMT"));
-    }
-
     public static LocalDateTime convertToKoreaLocalDateTime(DateTime dateTime) {
         Instant instant = Instant.ofEpochMilli(dateTime.getValue());
         return LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Seoul"));
@@ -35,12 +30,18 @@ public final class YoutubeConvertUtils {
                 .toList();
     }
 
+    /**
+     * PlaylistItemListResponse에서 동영상 ID를 추출한다.
+     */
     public static List<String> convertToVideoIds(PlaylistItemListResponse playlistItemListResponse) {
         return playlistItemListResponse.getItems().stream()
                 .map(playlistItem -> playlistItem.getSnippet().getResourceId().getVideoId())
                 .toList();
     }
 
+    /**
+     * 채널 ID를 업로드된 동영상 재생목록 ID로 변환한다.
+     */
     public static String convertToUploadPlaylistId(String channelId) {
         char[] chars = channelId.toCharArray();
         chars[1] = 'U';

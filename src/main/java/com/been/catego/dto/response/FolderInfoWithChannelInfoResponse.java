@@ -6,14 +6,14 @@ import com.been.catego.domain.FolderChannel;
 
 import java.util.List;
 
-public record FolderInfoWithChannelResponse(
+public record FolderInfoWithChannelInfoResponse(
         Long folderId,
         String folderName,
         List<ChannelInfoResponse> channels
 ) {
 
-    public static FolderInfoWithChannelResponse from(Folder folder) {
-        return new FolderInfoWithChannelResponse(folder.getId(),
+    public static FolderInfoWithChannelInfoResponse from(Folder folder) {
+        return new FolderInfoWithChannelInfoResponse(folder.getId(),
                 folder.getName(),
                 folder.getFolderChannels().stream()
                         .map(ChannelInfoResponse::from)

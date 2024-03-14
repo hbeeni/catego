@@ -4,11 +4,9 @@ import com.been.catego.domain.Folder;
 import com.been.catego.domain.FolderChannel;
 import com.been.catego.dto.response.ChannelResponse;
 import com.been.catego.dto.response.ChannelWithFolderNamesResponse;
+import com.been.catego.dto.response.DataWithPageTokenResponse;
 import com.been.catego.dto.response.PageTokenResponse;
 import com.been.catego.dto.response.VideoResponse;
-import com.been.catego.dto.response.WithPageTokenResponse;
-import com.been.catego.exception.CustomException;
-import com.been.catego.exception.ErrorMessages;
 import com.been.catego.repository.FolderChannelRepository;
 import com.been.catego.repository.FolderRepository;
 import com.google.api.services.youtube.model.Channel;
@@ -33,42 +31,56 @@ public class ChannelService {
     private final FolderRepository folderRepository;
     private final FolderChannelRepository folderChannelRepository;
 
-    private final YouTubeApiService youTubeApiService;
+    private final YouTubeApiDataService youTubeApiDataService;
 
-    public WithPageTokenResponse<List<ChannelWithFolderNamesResponse>> findSubscriptionChannelsWithFolderNames(
+    /**
+     * 유튜브 구독 채널을 폴더 이름과 함께 반환한다.
+     */
+    public DataWithPageTokenResponse<List<ChannelWithFolderNamesResponse>> findSubscriptionChannelsWithFolderNames(
             Long userId, String pageToken, long maxResult) {
-        //구독 채널 가져오기
+
         SubscriptionListResponse subscriptionListResponse =
-                youTubeApiService.getSubscriptionListResponse(pageToken, maxResult);
-        List<Channel> youTubeChannels = youTubeApiService.findChannels(subscriptionListResponse);
+                youTubeApiDataService.getSubscriptionListResponse(pageToken, maxResult);
+
+        List<Channel> youTubeChannels = youTubeApiDataService.getChannels(subscriptionListResponse);
 
         List<ChannelWithFolderNamesResponse> data =
                 getChannelWithFolderNamesSortedByChannelTitle(userId, youTubeChannels);
         PageTokenResponse pageTokenResponse = new PageTokenResponse(subscriptionListResponse.getPrevPageToken(),
                 subscriptionListResponse.getNextPageToken());
 
-        return new WithPageTokenResponse<>(data, pageTokenResponse);
+        return new DataWithPageTokenResponse<>(data, pageTokenResponse);
     }
 
+    /**
+     * 채널의 정보를 반환한다.
+     */
     public ChannelResponse getChannelInfo(String channelId) {
-        return youTubeApiService.findChannel(channelId)
-                .map(ChannelResponse::from)
-                .orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_CHANNEL));
+        return ChannelResponse.from(youTubeApiDataService.getChannelById(channelId));
     }
 
-    public WithPageTokenResponse<List<VideoResponse>> getVideosForChannel(String channelId, int maxResult,
-                                                                          String pageToken) {
+    /**
+     * 채널의 동영상을 페이지 토큰과 함께 반환한다.
+     *
+     * @param channelId 채널 ID
+     * @param maxResult 동영상 개수, 최대 50
+     */
+    public DataWithPageTokenResponse<List<VideoResponse>> getVideosOfChannel(
+            String channelId, int maxResult, String pageToken) {
+
         PlaylistItemListResponse playlistItemListResponse =
-                youTubeApiService.getVideosByChannelId(channelId, maxResult, pageToken);
+                youTubeApiDataService.getVideosByChannelId(channelId, maxResult, pageToken);
 
         PageTokenResponse pageTokenResponse = new PageTokenResponse(playlistItemListResponse.getPrevPageToken(),
                 playlistItemListResponse.getNextPageToken());
 
-        List<VideoResponse> data = youTubeApiService.getVideosByIds(convertToVideoIds(playlistItemListResponse))
-                .stream()
+        List<String> videoIds = convertToVideoIds(playlistItemListResponse);
+
+        List<VideoResponse> data = youTubeApiDataService.getVideosByIds(videoIds).stream()
                 .map(VideoResponse::from)
                 .toList();
-        return new WithPageTokenResponse<>(data, pageTokenResponse);
+
+        return new DataWithPageTokenResponse<>(data, pageTokenResponse);
     }
 
     private List<ChannelWithFolderNamesResponse> getChannelWithFolderNamesSortedByChannelTitle(Long userId,
@@ -97,7 +109,7 @@ public class ChannelService {
     }
 
     private Map<String, List<FolderChannel>> getChannelIdToFolderChannelsMap(List<Long> folderIds) {
-        List<FolderChannel> folderChannels = folderChannelRepository.findAllByFolderIdIn(folderIds);
+        List<FolderChannel> folderChannels = folderChannelRepository.findAllByFolderIds(folderIds);
         return folderChannels.stream()
                 .collect(Collectors.groupingBy(folderChannel -> folderChannel.getChannel().getId()));
     }

@@ -7,17 +7,17 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class SubscriptionResponse {
+public final class SubscriptionChannelResponse {
 
     private final String channelId;
     private final String channelTitle;
     private final String thumbnailUrl;
     private boolean includedInFolder;
 
-    public static SubscriptionResponse from(Subscription subscription) {
+    public static SubscriptionChannelResponse from(Subscription subscription) {
         SubscriptionSnippet snippet = subscription.getSnippet();
 
-        return new SubscriptionResponse(
+        return new SubscriptionChannelResponse(
                 snippet.getResourceId().getChannelId(),
                 snippet.getTitle(),
                 snippet.getThumbnails().getDefault().getUrl(),
