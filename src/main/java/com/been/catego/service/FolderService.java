@@ -16,12 +16,17 @@ import com.been.catego.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor
 @Transactional
@@ -88,7 +93,7 @@ public class FolderService {
     }
 
     public void createFolder(Long userId, String folderName, Map<String, ChannelDto> channelIdToChannelDtoMap) {
-        List<Channel> channels = saveNewChannels(channelIdToChannelDtoMap);
+        List<Channel> channels = saveNewChannelsAndReturnAllChannels(channelIdToChannelDtoMap);
 
         //folder 생성
         Folder folder = Folder.builder()
@@ -115,23 +120,55 @@ public class FolderService {
         Folder folder = getFolderOrException(folderId, userId);
 
         //폴더 이름 변경
-        folder.updateName(folderName);
+        if (StringUtils.hasText(folderName)) {
+            folder.updateName(folderName);
+        }
 
-        //새로운 채널 저장
-        List<Channel> channels = saveNewChannels(channelIdToChannelDtoMap);
+        List<Channel> selectedChannels = saveNewChannelsAndReturnAllChannels(channelIdToChannelDtoMap);
+        List<FolderChannel> folderChannels = folder.getFolderChannels();
 
-        //폴더의 기존 채널은 모두 삭제
-        List<FolderChannel> oldFolderChannels = folder.getFolderChannels();
-        folderChannelRepository.deleteAllInBatch(oldFolderChannels);
+        Map<String, FolderChannel> existingChannelIdMap = folderChannels.stream()
+                .collect(toMap(
+                        folderChannel -> folderChannel.getChannel().getId(),
+                        Function.identity()
+                ));
 
-        //폴더에 채널 새로 저장
-        List<FolderChannel> newFolderChannels = channels.stream()
-                .map(channel -> FolderChannel.builder()
+        removeExcludedChannelsFromFolder(folderChannels, selectedChannels, existingChannelIdMap);
+        saveAddedChannelsToFolder(folder, folderChannels, selectedChannels, existingChannelIdMap);
+    }
+
+    /**
+     * 폴더에 새롭게 추가된 채널 저장
+     */
+    private static void saveAddedChannelsToFolder(Folder folder, List<FolderChannel> folderChannels,
+                                                  List<Channel> selectedChannels,
+                                                  Map<String, FolderChannel> existingChannelIdMap) {
+
+        for (Channel channel : selectedChannels) {
+            if (!existingChannelIdMap.containsKey(channel.getId())) {
+                folderChannels.add(FolderChannel.builder()
                         .folder(folder)
                         .channel(channel)
-                        .build())
-                .toList();
-        folder.setFolderChannels(newFolderChannels);
+                        .build());
+            }
+        }
+    }
+
+    /**
+     * 폴더의 기존 채널 중 제외된 채널 삭제
+     */
+    private void removeExcludedChannelsFromFolder(List<FolderChannel> folderChannels, List<Channel> selectedChannels,
+                                                  Map<String, FolderChannel> existingChannelIdMap) {
+
+        Set<String> channelIdSet = selectedChannels.stream().map(Channel::getId).collect(toSet());
+
+        Set<FolderChannel> excludedChannel = existingChannelIdMap.entrySet().stream()
+                .filter(entry -> !channelIdSet.contains(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .collect(toSet());
+
+        folderChannels.removeAll(excludedChannel);
+        folderChannelRepository.deleteAllInBatch(excludedChannel);
     }
 
     public void deleteFolder(Long folderId, Long userId) {
@@ -150,7 +187,7 @@ public class FolderService {
     /**
      * DB에 저장되어 있지 않은 채널을 저장한 후, 원래 저장되어 있던 채널과 저장한 채널을 리스트로 반환한다.
      */
-    private List<Channel> saveNewChannels(Map<String, ChannelDto> channelIdToChannelDtoMap) {
+    private List<Channel> saveNewChannelsAndReturnAllChannels(Map<String, ChannelDto> channelIdToChannelDtoMap) {
         List<Channel> channels = channelRepository.findAllById(channelIdToChannelDtoMap.keySet());
         Set<String> existingChannelIds = channels.stream()
                 .map(Channel::getId)
