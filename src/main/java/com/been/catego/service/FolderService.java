@@ -11,9 +11,11 @@ import com.been.catego.exception.CustomException;
 import com.been.catego.exception.ErrorMessages;
 import com.been.catego.repository.ChannelRepository;
 import com.been.catego.repository.FolderChannelRepository;
+import com.been.catego.repository.FolderRedisRepository;
 import com.been.catego.repository.FolderRepository;
 import com.been.catego.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -37,11 +40,19 @@ public class FolderService {
     private final ChannelRepository channelRepository;
     private final FolderChannelRepository folderChannelRepository;
     private final UserRepository userRepository;
+    private final FolderRedisRepository folderRedisRepository;
 
     private final YouTubeApiDataService youTubeApiDataService;
 
     @Transactional(readOnly = true)
     public List<FolderInfoWithChannelInfoResponse> getAllFoldersWithChannelsByUserId(Long userId) {
+        List<FolderInfoWithChannelInfoResponse> foldersFromRedis = folderRedisRepository.getFolders(userId);
+
+        if (!foldersFromRedis.isEmpty()) {
+            log.info("[getAllFoldersWithChannelsByUserId] REDIS getFolders success");
+            return foldersFromRedis;
+        }
+
         List<Folder> folders = folderRepository.findAllByUser_IdOrderByNameAsc(userId);
 
         List<Long> folderIds = folders.stream().map(Folder::getId).toList();
@@ -53,9 +64,14 @@ public class FolderService {
 
         folders.forEach(folder -> folder.setFolderChannels(folderChannelMap.get(folder.getId())));
 
-        return folders.stream()
+        List<FolderInfoWithChannelInfoResponse> foldersFromDB = folders.stream()
                 .map(FolderInfoWithChannelInfoResponse::from)
                 .toList();
+
+        //redis save
+        folderRedisRepository.saveFolders(userId, foldersFromDB);
+
+        return foldersFromDB;
     }
 
     @Transactional(readOnly = true)
@@ -111,6 +127,8 @@ public class FolderService {
 
         folder.setFolderChannels(folderChannels);
         folderRepository.save(folder);
+
+        folderRedisRepository.deleteFolders(userId);
     }
 
     public void editFolder(Long folderId, Long userId, String folderName,
@@ -135,6 +153,8 @@ public class FolderService {
 
         removeExcludedChannelsFromFolder(folderChannels, selectedChannels, existingChannelIdMap);
         saveAddedChannelsToFolder(folder, folderChannels, selectedChannels, existingChannelIdMap);
+
+        folderRedisRepository.deleteFolders(userId);
     }
 
     /**
@@ -177,6 +197,8 @@ public class FolderService {
 
         folderChannelRepository.deleteAllInBatch(folderChannels);
         folderRepository.delete(folder);
+
+        folderRedisRepository.deleteFolders(userId);
     }
 
     private Folder getFolderOrException(Long folderId, Long userId) {
