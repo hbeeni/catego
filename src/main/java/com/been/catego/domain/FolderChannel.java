@@ -36,6 +36,14 @@ public class FolderChannel {
         this.channel = channel;
     }
 
+    private boolean isSameFolderAndChannel(Folder folder, Channel channel) {
+        if (this.folder == null || this.channel == null || folder == null || channel == null) {
+            return false;
+        }
+        return Objects.equals(this.folder.getId(), folder.getId()) &&
+                Objects.equals(this.channel.getId(), channel.getId());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -44,7 +52,8 @@ public class FolderChannel {
         if (!(o instanceof FolderChannel that)) {
             return false;
         }
-        return this.getId() != null && Objects.equals(this.getId(), that.getId());
+        return (this.getId() != null && Objects.equals(this.getId(), that.getId())) ||
+                isSameFolderAndChannel(that.folder, that.channel);
     }
 
     @Override
