@@ -49,7 +49,19 @@ public final class YoutubeFormatUtils {
         return decimalFormat.format(videoCount);
     }
 
+    public static String formatCommentCount(BigInteger commentCount) {
+        return formatCount(commentCount, "#.#", "사용 중지 됨");
+    }
+
     private static String formatCount(BigInteger count, String format) {
+        return formatCount(count, format, "");
+    }
+
+    private static String formatCount(BigInteger count, String format, String defaultValue) {
+        if (count == null) {
+            return defaultValue;
+        }
+
         double n = count.doubleValue();
         DecimalFormat decimalFormat = new DecimalFormat(format);
 
@@ -59,10 +71,8 @@ public final class YoutubeFormatUtils {
             return decimalFormat.format(n / 10000) + "만";
         } else if (n > 1000) {
             return decimalFormat.format(n / 1000) + "천";
-        } else if (n > 100) {
-            return decimalFormat.format(n / 100) + "백";
         } else {
-            return String.valueOf(n);
+            return String.valueOf(count);
         }
     }
 }

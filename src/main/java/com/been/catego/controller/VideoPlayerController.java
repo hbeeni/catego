@@ -20,6 +20,6 @@ public class VideoPlayerController {
     public String videoPlayer(@RequestParam String videoId, Model model) {
         VideoPlayerDetailResponse response = youTubeApiService.getVideoDetailForVideoPlayer(videoId);
         model.addAttribute("videoPlayer", response);
-        return "folder/video-player";
+        return "channel/video-player";
     }
 }
