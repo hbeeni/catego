@@ -4,10 +4,10 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_IP}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://catego-database:3306/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: false
     properties:
@@ -26,6 +26,10 @@ spring:
               - profile
               - https://www.googleapis.com/auth/youtube.readonly
               - https://www.googleapis.com/auth/youtube.force-ssl
+  data:
+    redis:
+      host: catego-redis
+      port: 6379
 
 youtube:
   api:
