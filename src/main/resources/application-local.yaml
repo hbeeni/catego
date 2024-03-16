@@ -1,9 +1,6 @@
 logging:
   level:
-    com.been.com.been.catego: debug
-    org.springframework.web.servlet: debug
     org.hibernate.orm.jdbc.bind: trace
-    org.springframework.security: debug
 
 spring:
   datasource:
