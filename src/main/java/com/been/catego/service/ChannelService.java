@@ -85,7 +85,7 @@ public class ChannelService {
 
     private List<ChannelWithFolderNamesResponse> getChannelWithFolderNamesSortedByChannelTitle(Long userId,
                                                                                                List<Channel> youTubeChannels) {
-        List<Folder> folders = folderRepository.findAllByUser_IdOrderByNameAsc(userId);
+        List<Folder> folders = folderRepository.findAllByUser_Id(userId);
         Map<String, List<FolderChannel>> channelIdToFolderChannelsMap =
                 getChannelIdToFolderChannelsMap(toFolderIds(folders));
 
@@ -105,6 +105,7 @@ public class ChannelService {
 
         return channelToFolderChannelsMap.get(youTubeChannel.getId()).stream()
                 .map(FolderChannel::getFolder)
+                .sorted(Comparator.comparing(Folder::getName, String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 
