@@ -7,29 +7,15 @@ services:
     image: bzzni/catego-redis
     ports:
       - "6379:6379"
-  catego-database:
-    container_name: catego-database
-    build:
-      dockerfile: Dockerfile
-      context: ./database
-    image: bzzni/catego-database
-    environment:
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-    volumes:
-      - ./database/config:/etc/mysql/conf.d
-      - ./database/init:/docker-entrypoint-initdb.d
-    ports:
-      - "3306:3306"
   catego-app:
     container_name: catego-app
     build: .
     depends_on:
-      - catego-database
       - catego-redis
     image: bzzni/catego-app
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -38,4 +24,4 @@ services:
       - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
     ports:
       - "80:8080"
-    restart: always
+    restart: on-failure
