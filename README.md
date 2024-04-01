@@ -268,7 +268,7 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
 - 폴더 정보는 사이드바에 표시됩니다.
 
-  <img src="./document/image/sidebar.png" style="width: 300px">
+  <img src="./document/image/sidebar.PNG" style="width: 300px">
 
 - 사이드바는 모든 페이지에 표시되기 때문에 폴더 정보 또한 모든 페이지에 가져와야 합니다.
 - 따라서 `Interceptor`로 구현하였습니다.
@@ -308,6 +308,8 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
 </div>
 </details>
+
+<br/>
 
 ## 5. 핵심 트러블 슈팅
 
@@ -366,6 +368,8 @@ public class FolderService {
 </div>
 </details>
 
+<br/>
+
 ### 5.2. 채널 저장 시 select 쿼리가 먼저 실행되는 문제
 
 - 채널 엔티티는 자동 생성되는 칼럼이 아닌 직접 지정한 칼럼을 ID로 사용합니다.
@@ -405,6 +409,8 @@ public class Channel implements Persistable<String> {
 
 </div>
 </details>
+
+<br/>
 
 ### 5.3. YouTube Data API 할당량이 너무 빨리 줄어드는 문제
 
