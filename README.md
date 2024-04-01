@@ -1,4 +1,4 @@
-# CATEGO
+# 🗂️ CATEGO
 
 YouTube 구독 채널 폴더링 서비스<br/>
 
