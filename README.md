@@ -521,7 +521,7 @@ public static String convertToUploadPlaylistId(String channelId) {
 
 - Google Cloud로 배포 중, HTTPS 적용을 위해 로드 밸런서(Proxy server)를 사용 중임
 - 이 때 웹 서버는 실제 클라이언트가 아닌 Proxy server가 접속한 것으로 인식해 https가 아닌 http로 리다이렉트해서 문제가 발생함
-- 해결: `X-Forwarded-*` 헤더를 이용하여 최초 요청 정보(클라이언트 정보)를 담음
+- 해결: `x-forwarded-*` 헤더를 이용하여 최초 요청 정보(클라이언트 정보)를 담음
 
     ```yaml
     server:
