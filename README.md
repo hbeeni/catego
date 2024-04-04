@@ -63,7 +63,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 <summary><b>폴더 생성</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **AJAX를 이용한 비동기 통신 및 무한 스크롤**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/resources/templates/folder/create-folder-form.html#L43)
@@ -93,7 +95,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
   <img src="./document/image/createFolder_controller.png">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/service/FolderService.java#L111)
 
@@ -121,7 +125,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 <summary><b>1. Form에 정보 전달</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/controller/FolderController.java#L45)
@@ -130,7 +136,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
     <img src="./document/image/editForm_controller.png" style="width: 1000px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 - **Form에 필요한 정보 가져오기**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/service/FolderService.java#L78)
@@ -146,7 +154,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 <summary><b>2. 구독 채널 가져오기</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **AJAX를 이용한 비동기 통신 및 무한 스크롤**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/resources/templates/folder/edit-folder-form.html#L44)
@@ -165,7 +175,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
   <img src="./document/image/editFolder_getSubscriptions.png" style="width: 900px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 - **구독한 모든 유튜브 채널 가져오기**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/service/FolderService.java#L87)
@@ -192,7 +204,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 <summary><b>3. 폴더 수정하기</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리 및 채널 리스트 파싱**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/controller/FolderController.java#L54)
@@ -203,7 +217,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
     <img src="./document/image/editFolder_controller.png">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/service/FolderService.java#L134)
 
@@ -233,7 +249,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 <summary><b>폴더 삭제</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/controller/FolderController.java#L64)
@@ -241,7 +259,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
     <img src="./document/image/deleteFolder_controller.png" style="width: 700px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/service/FolderService.java#L194)
 
@@ -264,7 +284,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 <summary><b>폴더 조회</b></summary>
 <div markdown="1">
 
-#### Interceptor
+<br/>
+
+**Interceptor**
 
 - 폴더 정보는 사이드바에 표시됩니다.
 
@@ -277,7 +299,9 @@ YouTube 구독 채널 폴더링 서비스<br/>
 
   <img src="./document/image/getFolders_interceptor.png" style="width: 1000px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 - **Redis에서 폴더 정보 가져오기**
   📌 [코드 확인](https://github.com/hbeeni/catego/blob/54022099c32a337e84d825a7df1dcfdb23a5424f/src/main/java/com/been/catego/repository/FolderRedisRepository.java#L40)
