@@ -28,6 +28,7 @@ YouTube 구독 채널 폴더링 서비스<br/>
 - Spring Data Redis
 - Thymeleaf
 - YouTube Data API v3
+- Google Cloud Platform
 
 </br>
 
@@ -519,7 +520,7 @@ public static String convertToUploadPlaylistId(String channelId) {
 <summary>구글 로그인 시 redirect_uri_mismatch 오류 발생 문제</summary>
 <div markdown="1">
 
-- Google Cloud로 배포 중, HTTPS 적용을 위해 로드 밸런서(Proxy server)를 사용 중임
+-  GCP로 배포 중, HTTPS 적용을 위해 로드 밸런서(Proxy server)를 사용 중임
 - 이 때 웹 서버는 실제 클라이언트가 아닌 Proxy server가 접속한 것으로 인식해 https가 아닌 http로 리다이렉트해서 문제가 발생함
 - 해결: `x-forwarded-*` 헤더를 이용하여 최초 요청 정보(클라이언트 정보)를 담음
 
@@ -642,7 +643,7 @@ public static String convertToUploadPlaylistId(String channelId) {
 </details>
 
 <details>
-<summary>Google Cloud VM 인스턴스에 SCP 명령어로 파일 전송 시 SSH: Permission denied (publickey) 오류 발생 문제</summary>
+<summary>GCP VM 인스턴스에 SCP 명령어로 파일 전송 시 SSH: Permission denied (publickey) 오류 발생 문제</summary>
 <div markdown="1">
 
 - 문제: public key와 매칭되는 private key를 찾을 수 없어서 오류가 발생
